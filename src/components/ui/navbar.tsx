@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Navbar() {
 	return (
@@ -14,7 +15,7 @@ export function Navbar() {
 					</span>
 				</Link>
 
-				{/* Nav links */}
+				{/* Right side: links + theme toggle */}
 				<div className="flex items-center gap-6">
 					<Link
 						href="/leaderboard"
@@ -22,6 +23,7 @@ export function Navbar() {
 					>
 						leaderboard
 					</Link>
+					<ThemeToggle />
 				</div>
 			</nav>
 		</header>

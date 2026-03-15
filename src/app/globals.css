@@ -85,27 +85,25 @@ body {
 }
 
 /* ─────────────────────────────────────────────
-   Light mode overrides (Mode: Light)
+   Light mode overrides — applied via .light class on <html>
    ───────────────────────────────────────────── */
 
-@media (prefers-color-scheme: light) {
-	@theme inline {
-		--color-bg-page: #f2f3f0;
-		--color-bg-surface: #ffffff;
-		--color-bg-elevated: #ffffff;
-		--color-bg-input: #ffffff;
-		--color-border-primary: #cbccc9;
-		--color-text-primary: #111111;
-		--color-text-secondary: #666666;
-		--color-text-tertiary: #888888;
-		--color-text-muted: #525252;
-		--color-success: #dfe6e1;
-		--color-success-foreground: #004d1a;
-		--color-error: #e5dcda;
-		--color-error-foreground: #8c1c00;
-		--color-warning: #e9e3d8;
-		--color-warning-foreground: #804200;
-		--color-info: #dfdfe6;
-		--color-info-foreground: #000066;
-	}
+html.light {
+	--color-bg-page: #f2f3f0;
+	--color-bg-surface: #ffffff;
+	--color-bg-elevated: #ffffff;
+	--color-bg-input: #ffffff;
+	--color-border-primary: #cbccc9;
+	--color-text-primary: #111111;
+	--color-text-secondary: #666666;
+	--color-text-tertiary: #888888;
+	--color-text-muted: #525252;
+	--color-success: #dfe6e1;
+	--color-success-foreground: #004d1a;
+	--color-error: #e5dcda;
+	--color-error-foreground: #8c1c00;
+	--color-warning: #e9e3d8;
+	--color-warning-foreground: #804200;
+	--color-info: #dfdfe6;
+	--color-info-foreground: #000066;
 }

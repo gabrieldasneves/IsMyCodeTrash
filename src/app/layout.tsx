@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/ui/navbar";
+import { ThemeProvider } from "@/context/theme";
 import "./globals.css";
 
 const jetBrainsMono = JetBrains_Mono({
@@ -22,8 +23,10 @@ export default function RootLayout({
 	return (
 		<html lang="pt-BR" className={jetBrainsMono.variable}>
 			<body>
-				<Navbar />
-				{children}
+				<ThemeProvider>
+					<Navbar />
+					{children}
+				</ThemeProvider>
 			</body>
 		</html>
 	);
