@@ -1,0 +1,42 @@
+"use client";
+
+import { useState } from "react";
+import { submitRoast } from "@/app/actions/roast";
+import { Button } from "@/components/ui/button";
+import { CodeEditor } from "@/components/ui/code-editor";
+import { Toggle } from "@/components/ui/toggle";
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+export function RoastForm() {
+	const [code, setCode] = useState("");
+
+	return (
+		<form action={submitRoast} className="flex flex-col gap-4">
+			<CodeEditor
+				name="code"
+				placeholder="// paste your code here..."
+				className="w-full max-w-[780px]"
+				onChange={setCode}
+			/>
+
+			{/* Actions Bar */}
+			<div className="flex w-full max-w-[780px] items-center justify-between">
+				<div className="flex items-center gap-4">
+					<Toggle name="roastMode" label="roast mode" defaultChecked />
+					<span className="font-sans text-xs text-[var(--color-text-tertiary)]">
+						{"// maximum sarcasm enabled"}
+					</span>
+				</div>
+				<Button
+					type="submit"
+					variant="primary"
+					size="md"
+					disabled={!code.trim()}
+				>
+					$ roast_my_code
+				</Button>
+			</div>
+		</form>
+	);
+}
