@@ -14,6 +14,7 @@ const EDITOR_FONT_SIZE = "13px";
 const EDITOR_LINE_HEIGHT = "24px"; // 1.846 × 13px ≈ 24px, integer value keeps alignment crisp
 const EDITOR_PADDING = "16px";
 const MIN_LINES = 16;
+const MAX_LINES = 40; // ~960px body height before scroll kicks in
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
@@ -124,11 +125,6 @@ export function CodeEditor({
 		};
 	}, [highlighter, code, effectiveLang]);
 
-	// ── Sync textarea scroll with overlay ────────────────────────────────────
-	const handleScroll = useCallback(() => {
-		// nothing — both scroll together because textarea is on top
-	}, []);
-
 	const handleChange = useCallback(
 		(e: React.ChangeEvent<HTMLTextAreaElement>) => {
 			const next = e.target.value;
@@ -167,9 +163,12 @@ export function CodeEditor({
 				/>
 			</div>
 
-			{/* Body: line numbers + editor area */}
-			<div className="relative flex flex-1">
-				{/* Line numbers */}
+			{/* Body: scroll container — caps height and scrolls line numbers + code together */}
+			<div
+				className="flex flex-1 overflow-y-auto"
+				style={{ maxHeight: `${MAX_LINES * 24 + 32}px` }}
+			>
+				{/* Line numbers — grows with content */}
 				<div
 					className="shrink-0 select-none border-r border-[var(--color-border-primary)] bg-[var(--color-bg-surface)] text-right"
 					style={{
@@ -197,11 +196,11 @@ export function CodeEditor({
 				</div>
 
 				{/* Editor area: overlay div (highlighted) + textarea (input) stacked */}
-				<div className="relative flex-1 overflow-hidden">
-					{/* Highlighted code overlay — sits behind the textarea */}
+				<div className="relative flex-1">
+					{/* Highlighted code overlay — absolutely fills the editor area */}
 					<div
 						aria-hidden="true"
-						className="pointer-events-none absolute inset-0 overflow-hidden"
+						className="pointer-events-none absolute inset-0"
 						style={{
 							padding: EDITOR_PADDING,
 							fontSize: EDITOR_FONT_SIZE,
@@ -222,7 +221,6 @@ export function CodeEditor({
 						name={name}
 						value={code}
 						onChange={handleChange}
-						onScroll={handleScroll}
 						placeholder={placeholder}
 						spellCheck={false}
 						autoComplete="off"
