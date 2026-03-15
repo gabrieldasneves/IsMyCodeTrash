@@ -1,26 +1,111 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─────────────────────────────────────────────
+   Design Tokens — extraídos do Pencil (devroast.pen)
+   Tema: Light / Dark (Mode axis)
+   ───────────────────────────────────────────── */
+
+@theme {
+  /* Fonts
+     --font-sans  → fonte do sistema (padrão Tailwind)
+     --font-mono  → JetBrains Mono (carregada via next/font) */
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+
+  /* Accent colors (invariantes de tema) */
+  --color-accent-green: #10b981;
+  --color-accent-cyan: #06b6d4;
+  --color-accent-amber: #f59e0b;
+  --color-accent-red: #ef4444;
+
+  /* Syntax highlight */
+  --color-syn-function: #61afef;
+  --color-syn-keyword: #c678dd;
+  --color-syn-string: #e5c07b;
+  --color-syn-number: #d19a66;
+  --color-syn-type: #e5c07b;
+  --color-syn-variable: #e06c75;
+  --color-syn-property: #98c379;
+  --color-syn-operator: #abb2bf;
+
+  /* Backgrounds (dark — tema principal do app) */
+  --color-bg-page: #0a0a0a;
+  --color-bg-surface: #0f0f0f;
+  --color-bg-elevated: #1a1a1a;
+  --color-bg-input: #111111;
+
+  /* Borders */
+  --color-border-primary: #2a2a2a;
+  --color-border-focus: #10b981;
+
+  /* Text */
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #4b5563;
+  --color-text-muted: #525252;
+
+  /* Semantic */
+  --color-success: #222924;
+  --color-success-foreground: #b6ffce;
+  --color-error: #24100b;
+  --color-error-foreground: #ff5c33;
+  --color-warning: #291c0f;
+  --color-warning-foreground: #ff8400;
+  --color-info: #222229;
+  --color-info-foreground: #b2b2ff;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ─────────────────────────────────────────────
+   Base styles
+   ───────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+	font-family: var(--font-mono);
+	background-color: var(--color-bg-page);
+	color: var(--color-text-primary);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	min-height: 100dvh;
+}
+
+/* ─────────────────────────────────────────────
+   Light mode overrides (Mode: Light)
+   ───────────────────────────────────────────── */
+
+@media (prefers-color-scheme: light) {
+	@theme inline {
+		--color-bg-page: #f2f3f0;
+		--color-bg-surface: #ffffff;
+		--color-bg-elevated: #ffffff;
+		--color-bg-input: #ffffff;
+		--color-border-primary: #cbccc9;
+		--color-text-primary: #111111;
+		--color-text-secondary: #666666;
+		--color-text-tertiary: #888888;
+		--color-text-muted: #525252;
+		--color-success: #dfe6e1;
+		--color-success-foreground: #004d1a;
+		--color-error: #e5dcda;
+		--color-error-foreground: #8c1c00;
+		--color-warning: #e9e3d8;
+		--color-warning-foreground: #804200;
+		--color-info: #dfdfe6;
+		--color-info-foreground: #000066;
+	}
 }

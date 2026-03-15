@@ -1,0 +1,292 @@
+{
+	"id": "c037a59b-10c9-40b2-9e58-5e3df5566a54",
+	"prevId": "00000000-0000-0000-0000-000000000000",
+	"version": "7",
+	"dialect": "postgresql",
+	"tables": {
+		"public.diff_lines": {
+			"name": "diff_lines",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"roast_id": {
+					"name": "roast_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"type": {
+					"name": "type",
+					"type": "diff_type",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"code": {
+					"name": "code",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"line_num": {
+					"name": "line_num",
+					"type": "smallint",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"diff_lines_roast_id_roasts_id_fk": {
+					"name": "diff_lines_roast_id_roasts_id_fk",
+					"tableFrom": "diff_lines",
+					"tableTo": "roasts",
+					"columnsFrom": ["roast_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.roast_issues": {
+			"name": "roast_issues",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"roast_id": {
+					"name": "roast_id",
+					"type": "uuid",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"severity": {
+					"name": "severity",
+					"type": "severity",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"title": {
+					"name": "title",
+					"type": "varchar(120)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"order": {
+					"name": "order",
+					"type": "smallint",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"roast_issues_roast_id_roasts_id_fk": {
+					"name": "roast_issues_roast_id_roasts_id_fk",
+					"tableFrom": "roast_issues",
+					"tableTo": "roasts",
+					"columnsFrom": ["roast_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.roasts": {
+			"name": "roasts",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "uuid",
+					"primaryKey": true,
+					"notNull": true,
+					"default": "gen_random_uuid()"
+				},
+				"code": {
+					"name": "code",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"language": {
+					"name": "language",
+					"type": "language",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "'plaintext'"
+				},
+				"line_count": {
+					"name": "line_count",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"score": {
+					"name": "score",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"verdict": {
+					"name": "verdict",
+					"type": "verdict",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"roast_quote": {
+					"name": "roast_quote",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"suggested_fix": {
+					"name": "suggested_fix",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"slug": {
+					"name": "slug",
+					"type": "varchar(12)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp with time zone",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {
+				"roasts_score_idx": {
+					"name": "roasts_score_idx",
+					"columns": [
+						{
+							"expression": "score",
+							"isExpression": false,
+							"asc": true,
+							"nulls": "last"
+						}
+					],
+					"isUnique": false,
+					"concurrently": false,
+					"method": "btree",
+					"with": {}
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"roasts_slug_unique": {
+					"name": "roasts_slug_unique",
+					"nullsNotDistinct": false,
+					"columns": ["slug"]
+				}
+			},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		}
+	},
+	"enums": {
+		"public.diff_type": {
+			"name": "diff_type",
+			"schema": "public",
+			"values": ["removed", "added", "context"]
+		},
+		"public.language": {
+			"name": "language",
+			"schema": "public",
+			"values": [
+				"typescript",
+				"javascript",
+				"tsx",
+				"jsx",
+				"python",
+				"go",
+				"rust",
+				"java",
+				"kotlin",
+				"swift",
+				"cpp",
+				"csharp",
+				"php",
+				"ruby",
+				"scala",
+				"html",
+				"css",
+				"scss",
+				"json",
+				"yaml",
+				"sql",
+				"bash",
+				"dockerfile",
+				"markdown",
+				"graphql",
+				"prisma",
+				"vue",
+				"svelte",
+				"plaintext"
+			]
+		},
+		"public.severity": {
+			"name": "severity",
+			"schema": "public",
+			"values": ["critical", "warning", "good", "info"]
+		},
+		"public.verdict": {
+			"name": "verdict",
+			"schema": "public",
+			"values": [
+				"excellent",
+				"acceptable",
+				"mediocre",
+				"needs_help",
+				"needs_serious_help"
+			]
+		}
+	},
+	"schemas": {},
+	"sequences": {},
+	"roles": {},
+	"policies": {},
+	"views": {},
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	}
+}

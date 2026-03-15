@@ -1,0 +1,29 @@
+import Link from "next/link";
+
+export function Navbar() {
+	return (
+		<header className="w-full border-b border-[var(--color-border-primary)] bg-[var(--color-bg-page)]">
+			<nav className="flex h-14 items-center justify-between px-10">
+				{/* Logo */}
+				<Link href="/" className="flex items-center gap-2 no-underline">
+					<span className="font-mono text-xl font-bold text-emerald-500">
+						{">"}
+					</span>
+					<span className="font-mono text-lg font-medium text-[var(--color-text-primary)]">
+						devroast
+					</span>
+				</Link>
+
+				{/* Nav links */}
+				<div className="flex items-center gap-6">
+					<Link
+						href="/leaderboard"
+						className="font-mono text-[13px] text-[var(--color-text-secondary)] transition-colors duration-150 hover:text-[var(--color-text-primary)]"
+					>
+						leaderboard
+					</Link>
+				</div>
+			</nav>
+		</header>
+	);
+}
