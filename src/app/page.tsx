@@ -1,23 +1,28 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { RoastForm } from "@/components/roast-form";
 import { Button } from "@/components/ui/button";
 import { LeaderboardRow } from "@/components/ui/leaderboard-row";
+import { StatsBarSkeleton } from "@/components/ui/stats-bar-skeleton";
+import { HomepageStats } from "@/components/homepage-stats";
 import { getLeaderboard } from "@/db/queries/leaderboard";
 import { getHomepageStats } from "@/db/queries/stats";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
+	// Dispara o prefetch das métricas no servidor (streaming para o cliente)
+	prefetch(trpc.stats.homepage.queryOptions());
+
+	// Mantido para alimentar o leaderboard preview e o contador "showing top X of Y"
 	const [leaderboard, stats] = await Promise.all([
 		getLeaderboard(3),
 		getHomepageStats(),
 	]);
 
 	const totalFormatted = stats.totalRoasts.toLocaleString("en-US");
-	const avgFormatted =
-		stats.averageScore !== null
-			? `${Number(stats.averageScore).toFixed(1)}/10`
-			: "—";
+	// avgFormatted não é mais necessário aqui — métricas renderizadas pelo HomepageStats via tRPC
 
 	return (
 		<main className="min-h-screen bg-[var(--color-bg-page)]">
@@ -42,18 +47,12 @@ export default async function HomePage() {
 				{/* ── Code Input ────────────────────────────────────────────── */}
 				<RoastForm />
 
-				{/* Footer hint */}
-				<div className="flex w-full max-w-[780px] items-center justify-center gap-6 pt-2">
-					<span className="font-sans text-xs text-[var(--color-text-tertiary)]">
-						{totalFormatted} codes roasted
-					</span>
-					<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
-						·
-					</span>
-					<span className="font-sans text-xs text-[var(--color-text-tertiary)]">
-						avg score: {avgFormatted}
-					</span>
-				</div>
+				{/* Stats animadas via tRPC + NumberFlow */}
+				<HydrateClient>
+					<Suspense fallback={<StatsBarSkeleton />}>
+						<HomepageStats />
+					</Suspense>
+				</HydrateClient>
 
 				{/* ── Spacer ────────────────────────────────────────────────── */}
 				<div className="h-16" />
@@ -110,7 +109,7 @@ export default async function HomePage() {
 							leaderboard.map((entry, i) => (
 								<Link
 									key={entry.id}
-									href={`/roast/${entry.slug}`}
+									href={`/roast/${entry.id}`}
 									className="block hover:bg-[var(--color-bg-surface)] transition-colors"
 								>
 									<LeaderboardRow
