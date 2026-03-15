@@ -1,7 +1,7 @@
 import { AnalysisCard } from "@/components/ui/analysis-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CodeBlock } from "@/components/ui/code-block";
+import { CodeBlock, CodeBlockHeader } from "@/components/ui/code-block";
 import { DiffLine } from "@/components/ui/diff-line";
 import { LeaderboardRow } from "@/components/ui/leaderboard-row";
 import { ScoreRing } from "@/components/ui/score-ring";
@@ -218,23 +218,25 @@ export default async function ComponentsPage() {
 				<ComponentGroup name="CodeBlock">
 					<Section
 						title="javascript"
-						description="With filename, syntax highlighted by Shiki (vesper theme)."
+						description="With CodeBlockHeader (filename + macOS dots) + CodeBlock."
 					>
-						<CodeBlock
-							fileName="calculate.js"
-							lang="javascript"
-							code={`function calculateTotal(items) {
+						<div className="w-[480px] border border-[var(--color-border-primary)]">
+							<CodeBlockHeader fileName="calculate.js" />
+							<CodeBlock
+								lang="javascript"
+								code={`function calculateTotal(items) {
   var total = 0;
   for (var i = 0; i < items.length; i++) {
     total = total + items[i].price;
   }
   return total;
 }`}
-							className="w-[480px]"
-						/>
+								className="border-0"
+							/>
+						</div>
 					</Section>
 
-					<Section title="typescript" description="Without filename.">
+					<Section title="typescript" description="Without filename header.">
 						<CodeBlock
 							lang="typescript"
 							code={`type User = { id: string; name: string };

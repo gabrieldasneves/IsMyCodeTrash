@@ -12,20 +12,52 @@ const wrapper = tv({
 	],
 });
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── CodeBlockHeader ─────────────────────────────────────────────────────────
+
+export interface CodeBlockHeaderProps extends HTMLAttributes<HTMLDivElement> {
+	fileName?: string;
+}
+
+export function CodeBlockHeader({
+	fileName,
+	className,
+	...props
+}: CodeBlockHeaderProps) {
+	return (
+		<div
+			className={[
+				"flex h-10 items-center gap-3 border-b border-[var(--color-border-primary)] bg-[var(--color-bg-input)] px-4",
+				className,
+			]
+				.filter(Boolean)
+				.join(" ")}
+			{...props}
+		>
+			<span className="size-2.5 rounded-full bg-red-500" aria-hidden />
+			<span className="size-2.5 rounded-full bg-amber-500" aria-hidden />
+			<span className="size-2.5 rounded-full bg-emerald-500" aria-hidden />
+			<span className="flex-1" />
+			{fileName && (
+				<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
+					{fileName}
+				</span>
+			)}
+		</div>
+	);
+}
+
+// ─── CodeBlock ────────────────────────────────────────────────────────────────
 
 export interface CodeBlockProps extends HTMLAttributes<HTMLDivElement> {
 	code: string;
 	lang: BundledLanguage;
-	fileName?: string;
 }
 
-// ─── Component (async Server Component) ──────────────────────────────────────
-
+/** Pure syntax-highlighted code block — no chrome header.
+ *  Compose with <CodeBlockHeader> when the macOS-style dots are needed. */
 export async function CodeBlock({
 	code,
 	lang,
-	fileName,
 	className,
 	...props
 }: CodeBlockProps) {
@@ -42,19 +74,6 @@ export async function CodeBlock({
 
 	return (
 		<div className={wrapper({ className })} {...props}>
-			{/* Header */}
-			<div className="flex h-10 items-center gap-3 border-b border-[var(--color-border-primary)] bg-[var(--color-bg-input)] px-4">
-				<span className="size-2.5 rounded-full bg-red-500" aria-hidden />
-				<span className="size-2.5 rounded-full bg-amber-500" aria-hidden />
-				<span className="size-2.5 rounded-full bg-emerald-500" aria-hidden />
-				<span className="flex-1" />
-				{fileName && (
-					<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
-						{fileName}
-					</span>
-				)}
-			</div>
-
 			{/* Highlighted code — rendered server-side by Shiki */}
 			<div
 				className="[&_pre]:overflow-x-auto [&_pre]:font-mono [&_pre]:text-[13px] [&_pre]:leading-relaxed"

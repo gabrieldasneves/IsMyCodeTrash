@@ -16,6 +16,9 @@ const EDITOR_PADDING = "16px";
 const MIN_LINES = 16;
 const MAX_LINES = 40; // ~960px body height before scroll kicks in
 
+/** Maximum characters allowed in a code snippet (~80 lines of typical code) */
+export const CODE_MAX_CHARS = 2000;
+
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const wrapper = tv({
@@ -48,6 +51,8 @@ export interface CodeEditorProps {
 	name?: string;
 	/** Called whenever the code content changes */
 	onChange?: (code: string) => void;
+	/** Called whenever the over-limit state changes */
+	onLimitChange?: (overLimit: boolean) => void;
 }
 
 export function CodeEditor({
@@ -56,6 +61,7 @@ export function CodeEditor({
 	className,
 	name,
 	onChange,
+	onLimitChange,
 }: CodeEditorProps) {
 	const highlighter = useHighlighter();
 
@@ -66,9 +72,16 @@ export function CodeEditor({
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const lineCount = Math.max(code.split("\n").length, MIN_LINES);
+	const charCount = code.length;
+	const overLimit = charCount > CODE_MAX_CHARS;
 
 	// The language that actually drives the highlight
 	const effectiveLang = selectedShiki ?? detectedShiki ?? null;
+
+	// ── Notify parent when over-limit state changes ───────────────────────────
+	useEffect(() => {
+		onLimitChange?.(overLimit);
+	}, [overLimit, onLimitChange]);
 
 	// ── Detect language whenever code changes ─────────────────────────────────
 	useEffect(() => {
@@ -242,6 +255,23 @@ export function CodeEditor({
 						}}
 					/>
 				</div>
+			</div>
+
+			{/* Footer: character counter — bottom-right */}
+			<div className="flex items-center justify-end border-t border-[var(--color-border-primary)] px-4 py-1.5">
+				<span
+					className={[
+						"font-mono text-xs tabular-nums transition-colors",
+						overLimit
+							? "text-red-500"
+							: charCount > CODE_MAX_CHARS * 0.85
+								? "text-amber-500"
+								: "text-[var(--color-text-tertiary)]",
+					].join(" ")}
+				>
+					{charCount.toLocaleString("en-US")} /{" "}
+					{CODE_MAX_CHARS.toLocaleString("en-US")}
+				</span>
 			</div>
 		</div>
 	);

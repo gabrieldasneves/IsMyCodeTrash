@@ -4,7 +4,7 @@ import type { BundledLanguage } from "shiki";
 import { AnalysisCard } from "@/components/ui/analysis-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CodeBlock } from "@/components/ui/code-block";
+import { CodeBlock, CodeBlockHeader } from "@/components/ui/code-block";
 import { DiffLine } from "@/components/ui/diff-line";
 import { ScoreRing } from "@/components/ui/score-ring";
 import { getRoastBySlug } from "@/db/queries/roast";
@@ -117,7 +117,10 @@ export default async function RoastPage({
 							your_submission
 						</span>
 					</div>
-					<CodeBlock code={roast.code} lang={lang} />
+					<div className="border border-[var(--color-border-primary)]">
+						<CodeBlockHeader />
+						<CodeBlock code={roast.code} lang={lang} className="border-0" />
+					</div>
 				</section>
 
 				{/* ── Divider ───────────────────────────────────────────────── */}
