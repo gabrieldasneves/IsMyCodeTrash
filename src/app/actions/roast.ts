@@ -35,5 +35,5 @@ export async function submitRoast(formData: FormData) {
 		suggestedFix: null,
 	});
 
-	redirect(`/roast/${roast.slug}`);
+	redirect(`/roast/${roast.id}`);
 }
