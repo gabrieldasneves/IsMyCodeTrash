@@ -10,9 +10,9 @@ const track = tv({
 		"relative inline-flex h-[22px] w-10 shrink-0 cursor-pointer items-center rounded-full p-[3px]",
 		"transition-colors duration-200 outline-none",
 		"bg-[var(--color-border-primary)]",
-		"data-[checked]:bg-emerald-500",
+		"data-[checked]:bg-[#7c3aed]",
 		"data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
-		"focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)]",
+		"focus-visible:ring-2 focus-visible:ring-[#7c3aed] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)]",
 	],
 });
 
