@@ -2,6 +2,17 @@
 
 CodeRoaster is a web app that brutally judges your code. Paste any snippet, get an AI-powered roast with a shame score, and watch your worst code end up on a public leaderboard for everyone to see.
 
+## Screenshots
+
+**Homepage — code editor with roast mode toggle and live stats**
+![Homepage](docs/screenshots/homepage.png)
+
+**Roast result — score ring, verdict, detailed analysis and suggested fix diff**
+![Roast Result](docs/screenshots/roast-result.png)
+
+**Shame leaderboard — top 20 worst code snippets with syntax highlighting**
+![Leaderboard](docs/screenshots/leaderboard.png)
+
 ## Features
 
 **Code Roasting** — Submit any code snippet and receive an unfiltered AI critique powered by Claude. Points out every bad practice, antipattern, and questionable decision — with optional maximum sarcasm mode.
