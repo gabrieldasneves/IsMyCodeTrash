@@ -54,35 +54,37 @@ export const roastRouter = createTRPCRouter({
 
 Importe de `@/trpc/server` — nunca de `@/trpc/client`.
 
+Com `cacheComponents: true` habilitado, o padrão atual é **`caller` + `"use cache"`** em async Server Components. O padrão `prefetch + HydrateClient` ainda existe na codebase mas não é o preferido para novos componentes.
+
 ```tsx
-// prefetch + streaming (padrão preferido)
-import { trpc, HydrateClient, prefetch } from "@/trpc/server";
-
-export default function Page() {
-  prefetch(trpc.stats.homepage.queryOptions());
-  return (
-    <HydrateClient>
-      <Suspense fallback={<Skeleton />}>
-        <ClientComponent />
-      </Suspense>
-    </HydrateClient>
-  );
-}
-
-// caller direto — apenas quando o Client Component não precisa dos dados
+// ✅ Padrão preferido: caller + "use cache" em async Server Component
+import { cacheLife } from "next/cache";
 import { caller } from "@/trpc/server";
 
-export default async function Page({ params }) {
-  const data = await caller.roast.getBySlug({ slug: params.slug });
+export async function HomepageStats() {
+  "use cache";
+  cacheLife("hours");
+
+  const data = await caller.stats.homepage();
+  return <StatsBar {...data} />;
+}
+
+// ✅ Para dados dinâmicos (sem cache), caller direto em página com "use cache"
+export default async function RoastResultPage({ params }) {
+  "use cache";
+  const { id } = await params;
+  const roast = await getRoastById(id); // keyed by id no cache
+  if (!roast) notFound();
+  return <RoastResult roast={roast} />;
 }
 ```
 
-**Quando usar `prefetch` vs `caller`:**
-| | `prefetch` + `HydrateClient` | `caller` direto |
-|---|---|---|
-| Client Component precisa dos dados | ✅ | ❌ |
-| Só o Server Component usa os dados | ❌ (overhead) | ✅ |
-| Suporte a Suspense/streaming | ✅ | ❌ |
+**Quando usar `caller` vs `prefetch + HydrateClient`:**
+| Cenário | Abordagem |
+|---|---|
+| Async Server Component com `"use cache"` | `caller` direto |
+| Client Component precisa de dados e interatividade | `prefetch` + `HydrateClient` + `useSuspenseQuery` |
+| Dados dinâmicos por request (params, cookies) | `caller` na page function com `"use cache"` |
 
 ## Uso em Client Components
 

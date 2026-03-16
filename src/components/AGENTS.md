@@ -20,47 +20,62 @@ Componentes de design system: Button, Badge, Input, CodeBlock, StatsBar, Skeleto
 
 Componentes de feature que orquestram dados e lógica:
 
-- Podem usar `useTRPC`, `useSuspenseQuery`, `useMutation`
-- Compõem componentes de `ui/` com dados reais
+- Preferência por **async Server Components** com `"use cache"` + `cacheLife()` usando `caller` direto
+- Client Components (`"use client"`) apenas quando há interatividade, estado local ou APIs de browser
 - Um arquivo por feature/página (`homepage-stats.tsx`, `roast-form.tsx`)
-- Geralmente são Client Components (`"use client"`) por consumirem hooks
 
 **Exemplos:**
-- `HomepageStats` — busca métricas via tRPC e renderiza `StatsBar`
-- `RoastForm` — gerencia estado do editor e chama a Server Action de submit
+- `HomepageStats` — async Server Component com `"use cache"`, chama `caller.stats.homepage()`, renderiza `StatsBar`
+- `HomepageLeaderboard` — async Server Component com `"use cache"`, chama `caller.leaderboard.preview()`
+- `LeaderboardPageContent` — async Server Component com `"use cache"`, chama `caller.leaderboard.page()`
+- `RoastForm` — Client Component, gerencia estado do editor e submete a Server Action
+- `RoastSubmitButton` — Client Component, usa `useFormStatus` para loading state
 
-## Padrão: Client Component com Suspense
+## Padrão: async Server Component com `"use cache"`
 
-Quando um componente de feature busca dados via tRPC:
-
-1. O **Server Component pai** faz `prefetch` e envolve com `<HydrateClient>`
-2. O **componente de feature** usa `useSuspenseQuery` — nunca `useQuery` quando há prefetch
-3. O **Suspense boundary** fica no pai, com um skeleton de `ui/` como fallback
-4. O **skeleton** corresponde visualmente ao componente real (mesmas dimensões/layout)
+O padrão preferido para feature components que buscam dados:
 
 ```tsx
-// Server Component (page.tsx)
-import { HydrateClient, prefetch, trpc } from "@/trpc/server";
-import { HomepageStats } from "@/components/homepage-stats";
-import { StatsBarSkeleton } from "@/components/ui/stats-bar-skeleton";
+// Feature component (homepage-stats.tsx)
+import { cacheLife } from "next/cache";
+import { caller } from "@/trpc/server";
+import { StatsBar } from "@/components/ui/stats-bar";
 
-export default function Page() {
-  prefetch(trpc.stats.homepage.queryOptions());
-  return (
-    <HydrateClient>
-      <Suspense fallback={<StatsBarSkeleton />}>
-        <HomepageStats />
-      </Suspense>
-    </HydrateClient>
-  );
+export async function HomepageStats() {
+  "use cache";
+  cacheLife("hours");
+
+  const { totalRoasts, averageScore } = await caller.stats.homepage();
+  return <StatsBar totalRoasts={totalRoasts} averageScore={averageScore} />;
 }
 
-// Feature component (homepage-stats.tsx)
+// Page (page.tsx) — sem HydrateClient, sem prefetch
+export default function Page() {
+  return (
+    <Suspense fallback={<StatsBarSkeleton />}>
+      <HomepageStats />
+    </Suspense>
+  );
+}
+```
+
+## Padrão: Client Component com interatividade
+
+Quando o componente precisa de estado ou APIs de browser:
+
+```tsx
+// Submit button com loading state (roast-submit-button.tsx)
 "use client";
-export function HomepageStats() {
-  const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.stats.homepage.queryOptions());
-  return <StatsBar {...data} />;
+import { useFormStatus } from "react-dom";
+import { Button } from "@/components/ui/button";
+
+export function RoastSubmitButton({ disabled }: { disabled: boolean }) {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={disabled || pending}>
+      {pending ? "$ roasting..." : "$ roast_my_code"}
+    </Button>
+  );
 }
 ```
 

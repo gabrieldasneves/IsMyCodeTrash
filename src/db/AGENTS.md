@@ -19,17 +19,23 @@ src/db/
 - Uma função por operação, em `src/db/queries/<feature>.ts`
 - Funções são `async` e retornam tipos explícitos quando o retorno não é óbvio
 - **Nunca acesse `db` fora de `src/db/queries/`** — nem em procedures tRPC, nem em Server Actions, nem em componentes
+- **Adicione `"use cache"` + `cacheLife()` nas query functions** que alimentam dados cacheados (leaderboard, stats). O cache é keyed pelos argumentos da função automaticamente.
 
 ```ts
-// ✅ correto — query isolada em src/db/queries/stats.ts
+// ✅ correto — query isolada com cache
+import { cacheLife } from "next/cache";
+
 export async function getHomepageStats() {
+  "use cache";
+  cacheLife("hours");
+
   const [result] = await db.select({ ... }).from(roasts);
   return result ?? defaultValue;
 }
 
-// ❌ errado — db importado diretamente em uma procedure ou Server Action
+// ❌ errado — db importado diretamente fora de queries/
 import { db } from "@/db";
-const data = await db.select().from(roasts); // não fazer isso fora de queries/
+const data = await db.select().from(roasts);
 ```
 
 ## Schema
@@ -48,9 +54,19 @@ npm run db:push       # aplica schema diretamente sem migration (só em dev, com
 npm run db:studio     # abre Drizzle Studio para inspecionar o banco
 ```
 
-## Relação com tRPC
+## Relação com tRPC e Server Components
 
-As funções de `src/db/queries/` são consumidas **exclusivamente** pelas procedures em `src/trpc/routers/`. Essa separação garante que toda leitura de dados do cliente passe pela camada de API tipada.
+As funções de `src/db/queries/` são chamadas pelas procedures tRPC **ou** diretamente via `caller` em async Server Components. O fluxo atual preferido:
+
+```
+async Server Component (com "use cache")
+  → caller.<router>.<proc>()
+      → procedure em src/trpc/routers/<feature>.ts
+          → função em src/db/queries/<feature>.ts (com "use cache")
+              → db (Drizzle)
+```
+
+Para Client Components que precisam de dados interativos:
 
 ```
 Client Component
@@ -59,5 +75,3 @@ Client Component
           → função em src/db/queries/<feature>.ts
               → db (Drizzle)
 ```
-
-A única exceção são Server Components que usam `caller` diretamente para dados que não precisam ser hidratados no cliente.
