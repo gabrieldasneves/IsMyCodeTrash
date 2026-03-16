@@ -14,14 +14,14 @@ O banco sobe via Docker Compose para desenvolvimento local.
 
 ## Stack de Banco de Dados
 
-| Ferramenta | Versão | Propósito |
-|---|---|---|
-| PostgreSQL | 16 (Alpine) | Banco relacional |
-| Drizzle ORM | `^0.44` | ORM type-safe, schema-as-code |
-| drizzle-kit | `^0.30` | CLI de migrations |
-| `postgres` (Postgres.js) | — | Driver PostgreSQL (preferível ao `pg` com Drizzle) |
-| AI SDK (Vercel) | `^4` | Cliente de IA agnóstico de provider |
-| Docker Compose | v2 | Orquestração local do Postgres |
+| Ferramenta               | Versão      | Propósito                                          |
+| ------------------------ | ----------- | -------------------------------------------------- |
+| PostgreSQL               | 16 (Alpine) | Banco relacional                                   |
+| Drizzle ORM              | `^0.44`     | ORM type-safe, schema-as-code                      |
+| drizzle-kit              | `^0.30`     | CLI de migrations                                  |
+| `postgres` (Postgres.js) | —           | Driver PostgreSQL (preferível ao `pg` com Drizzle) |
+| AI SDK (Vercel)          | `^4`        | Cliente de IA agnóstico de provider                |
+| Docker Compose           | v2          | Orquestração local do Postgres                     |
 
 > **Submissões são anônimas.** Não existe conceito de usuário ou autenticação neste projeto. Qualquer pessoa pode submeter código e qualquer pessoa pode ver o leaderboard — sem login, sem conta.
 
@@ -33,18 +33,18 @@ O banco sobe via Docker Compose para desenvolvimento local.
 // src/db/schema.ts
 
 export const verdictEnum = pgEnum("verdict", [
-  "excellent",      // score >= 8.0  — código decente
-  "acceptable",     // score >= 6.0  — passa, mas dá pra melhorar
-  "mediocre",       // score >= 4.0  — problemático
-  "needs_help",     // score >= 2.5  — bem ruim
+  "excellent", // score >= 8.0  — código decente
+  "acceptable", // score >= 6.0  — passa, mas dá pra melhorar
+  "mediocre", // score >= 4.0  — problemático
+  "needs_help", // score >= 2.5  — bem ruim
   "needs_serious_help", // score < 2.5 — catastrófico (exibido no design)
 ]);
 
 export const severityEnum = pgEnum("severity", [
-  "critical",  // problema grave (cor: accent-red no design)
-  "warning",   // atenção necessária (cor: accent-amber)
-  "good",      // ponto positivo (cor: accent-green)
-  "info",      // observação neutra
+  "critical", // problema grave (cor: accent-red no design)
+  "warning", // atenção necessária (cor: accent-amber)
+  "good", // ponto positivo (cor: accent-green)
+  "info", // observação neutra
 ]);
 
 export const languageEnum = pgEnum("language", [
@@ -92,28 +92,31 @@ Tabela principal. Cada submissão de código gera um roast.
 
 ```typescript
 export const roasts = pgTable("roasts", {
-  id:         uuid("id").defaultRandom().primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
 
   // Código submetido (anônimo — sem vínculo de usuário)
-  code:       text("code").notNull(),
-  language:   languageEnum("language").notNull().default("plaintext"),
-  lineCount:  integer("line_count").notNull(),
+  code: text("code").notNull(),
+  language: languageEnum("language").notNull().default("plaintext"),
+  lineCount: integer("line_count").notNull(),
 
   // Resultado da IA
-  score:        real("score").notNull(),        // 0.0 – 10.0
-  verdict:      verdictEnum("verdict").notNull(),
-  roastQuote:   text("roast_quote").notNull(),  // frase de impacto da IA (Score Hero + OG image)
-  suggestedFix: text("suggested_fix"),          // diff/código sugerido pela IA (null se código for bom)
+  score: real("score").notNull(), // 0.0 – 10.0
+  verdict: verdictEnum("verdict").notNull(),
+  roastQuote: text("roast_quote").notNull(), // frase de impacto da IA (Score Hero + OG image)
+  suggestedFix: text("suggested_fix"), // diff/código sugerido pela IA (null se código for bom)
 
   // Compartilhamento / OG
-  slug:       varchar("slug", { length: 12 }).notNull().unique(), // ID curto para /roast/[slug]
+  slug: varchar("slug", { length: 12 }).notNull().unique(), // ID curto para /roast/[slug]
 
   // Timestamps
-  createdAt:  timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
 ```
 
 **Observações de design:**
+
 - Sem campo de usuário — submissões são completamente anônimas
 - Sem campo `isPublic` — todo roast entra automaticamente no leaderboard público
 - `score` é `real` (float 4 bytes) — precisão de 1 casa decimal suficiente (ex: `3.5`, `7.2`)
@@ -129,17 +132,20 @@ Issues do detailed_analysis (seção `Analysis Section` no Screen 2). Cada roast
 
 ```typescript
 export const roastIssues = pgTable("roast_issues", {
-  id:          uuid("id").defaultRandom().primaryKey(),
-  roastId:     uuid("roast_id").notNull().references(() => roasts.id, { onDelete: "cascade" }),
+  id: uuid("id").defaultRandom().primaryKey(),
+  roastId: uuid("roast_id")
+    .notNull()
+    .references(() => roasts.id, { onDelete: "cascade" }),
 
-  severity:    severityEnum("severity").notNull(),
-  title:       varchar("title", { length: 120 }).notNull(),
+  severity: severityEnum("severity").notNull(),
+  title: varchar("title", { length: 120 }).notNull(),
   description: text("description").notNull(),
-  order:       smallint("order").notNull(), // posição exibida no grid de cards (0-based)
+  order: smallint("order").notNull(), // posição exibida no grid de cards (0-based)
 });
 ```
 
 **Observações de design:**
+
 - `severity` mapeia diretamente para as variantes do `AnalysisCard` (`critical | warning | good | info`)
 - `order` define a ordem de exibição no `Issues Grid` (2 colunas × N linhas no Screen 2)
 - Relação: 1 roast → N issues (cascade delete)
@@ -152,22 +158,25 @@ Linhas do `suggested_fix` (seção `Diff Section` no Screen 2). Armazena o diff 
 
 ```typescript
 export const diffLines = pgTable("diff_lines", {
-  id:       uuid("id").defaultRandom().primaryKey(),
-  roastId:  uuid("roast_id").notNull().references(() => roasts.id, { onDelete: "cascade" }),
+  id: uuid("id").defaultRandom().primaryKey(),
+  roastId: uuid("roast_id")
+    .notNull()
+    .references(() => roasts.id, { onDelete: "cascade" }),
 
-  type:     diffTypeEnum("type").notNull(), // "removed" | "added" | "context"
-  code:     text("code").notNull(),
-  lineNum:  smallint("line_num").notNull(), // posição na exibição do diff
+  type: diffTypeEnum("type").notNull(), // "removed" | "added" | "context"
+  code: text("code").notNull(),
+  lineNum: smallint("line_num").notNull(), // posição na exibição do diff
 });
 
 export const diffTypeEnum = pgEnum("diff_type", [
-  "removed",  // linha removida (cor vermelha no DiffLine)
-  "added",    // linha adicionada (cor verde no DiffLine)
-  "context",  // linha de contexto (cor neutra)
+  "removed", // linha removida (cor vermelha no DiffLine)
+  "added", // linha adicionada (cor verde no DiffLine)
+  "context", // linha de contexto (cor neutra)
 ]);
 ```
 
 **Observações de design:**
+
 - Mapeia para o componente `DiffLine` (`type: "removed" | "added" | "context"`)
 - `lineNum` garante a ordem correta de exibição no `Diff Block`
 
@@ -177,12 +186,15 @@ export const diffTypeEnum = pgEnum("diff_type", [
 
 ```typescript
 export const roastsRelations = relations(roasts, ({ many }) => ({
-  issues:    many(roastIssues),
+  issues: many(roastIssues),
   diffLines: many(diffLines),
 }));
 
 export const roastIssuesRelations = relations(roastIssues, ({ one }) => ({
-  roast: one(roasts, { fields: [roastIssues.roastId], references: [roasts.id] }),
+  roast: one(roasts, {
+    fields: [roastIssues.roastId],
+    references: [roasts.id],
+  }),
 }));
 
 export const diffLinesRelations = relations(diffLines, ({ one }) => ({
@@ -199,18 +211,18 @@ export const diffLinesRelations = relations(diffLines, ({ one }) => ({
 export const roastsScoreIdx = index("roasts_score_idx").on(roasts.score);
 
 // Busca por slug para a página de compartilhamento /roast/[slug]
-export const roastsSlugIdx  = uniqueIndex("roasts_slug_idx").on(roasts.slug);
+export const roastsSlugIdx = uniqueIndex("roasts_slug_idx").on(roasts.slug);
 
 // Issues de um roast em ordem
 export const issuesRoastIdx = index("issues_roast_order_idx").on(
   roastIssues.roastId,
-  roastIssues.order
+  roastIssues.order,
 );
 
 // Diff de um roast em ordem
-export const diffRoastIdx   = index("diff_roast_linenum_idx").on(
+export const diffRoastIdx = index("diff_roast_linenum_idx").on(
   diffLines.roastId,
-  diffLines.lineNum
+  diffLines.lineNum,
 );
 ```
 
@@ -272,17 +284,20 @@ volumes:
 ## Variáveis de Ambiente
 
 **.env.example**
+
 ```bash
 # PostgreSQL — gerado pelo docker-compose.yml acima
 DATABASE_URL="postgresql://coderoaster:coderoaster@localhost:5432/coderoaster"
 ```
 
 **.env.local** (criado localmente, não commitado)
+
 ```bash
 DATABASE_URL="postgresql://coderoaster:coderoaster@localhost:5432/coderoaster"
 ```
 
 Adicionar ao `.gitignore`:
+
 ```
 .env.local
 .env
@@ -296,14 +311,14 @@ Adicionar ao `.gitignore`:
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema:    "./src/db/schema.ts",
-  out:       "./src/db/migrations",
-  dialect:   "postgresql",
+  schema: "./src/db/schema.ts",
+  out: "./src/db/migrations",
+  dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
-  verbose:  true,
-  strict:   true,
+  verbose: true,
+  strict: true,
 });
 ```
 
@@ -317,7 +332,9 @@ import postgres from "postgres";
 import * as schema from "./schema";
 
 // Singleton para não criar múltiplas conexões em desenvolvimento (hot reload)
-const globalForDb = globalThis as unknown as { _db: ReturnType<typeof drizzle> | undefined };
+const globalForDb = globalThis as unknown as {
+  _db: ReturnType<typeof drizzle> | undefined;
+};
 
 function createDb() {
   const client = postgres(process.env.DATABASE_URL!, {
@@ -348,6 +365,7 @@ npm install @ai-sdk/openai   # ou @ai-sdk/anthropic, @ai-sdk/google, etc.
 ```
 
 Variável de ambiente adicional no `.env.example`:
+
 ```bash
 # Apenas uma das chaves abaixo, dependendo do provider escolhido
 OPENAI_API_KEY=""
@@ -368,24 +386,34 @@ export const roastOutputSchema = z.object({
     .number()
     .min(0)
     .max(10)
-    .describe("Shame score from 0.0 (catastrophic) to 10.0 (perfect). One decimal place."),
+    .describe(
+      "Shame score from 0.0 (catastrophic) to 10.0 (perfect). One decimal place.",
+    ),
 
   verdict: z
-    .enum(["excellent", "acceptable", "mediocre", "needs_help", "needs_serious_help"])
+    .enum([
+      "excellent",
+      "acceptable",
+      "mediocre",
+      "needs_help",
+      "needs_serious_help",
+    ])
     .describe("Verdict label matching the score range."),
 
   roastQuote: z
     .string()
     .max(200)
-    .describe("One brutal, witty sentence summarizing the code quality. No markdown."),
+    .describe(
+      "One brutal, witty sentence summarizing the code quality. No markdown.",
+    ),
 
   issues: z
     .array(
       z.object({
-        severity:    z.enum(["critical", "warning", "good", "info"]),
-        title:       z.string().max(80),
+        severity: z.enum(["critical", "warning", "good", "info"]),
+        title: z.string().max(80),
         description: z.string().max(300),
-      })
+      }),
     )
     .min(2)
     .max(6)
@@ -396,10 +424,12 @@ export const roastOutputSchema = z.object({
       z.object({
         type: z.enum(["removed", "added", "context"]),
         code: z.string(),
-      })
+      }),
     )
     .nullable()
-    .describe("Unified diff lines for the suggested fix. Null if code is already good."),
+    .describe(
+      "Unified diff lines for the suggested fix. Null if code is already good.",
+    ),
 });
 
 export type RoastOutput = z.infer<typeof roastOutputSchema>;
@@ -407,13 +437,13 @@ export type RoastOutput = z.infer<typeof roastOutputSchema>;
 
 **Mapeamento score → verdict (regras para o prompt):**
 
-| Score | Verdict |
-|---|---|
-| >= 8.0 | `excellent` |
-| >= 6.0 | `acceptable` |
-| >= 4.0 | `mediocre` |
-| >= 2.5 | `needs_help` |
-| < 2.5 | `needs_serious_help` |
+| Score  | Verdict              |
+| ------ | -------------------- |
+| >= 8.0 | `excellent`          |
+| >= 6.0 | `acceptable`         |
+| >= 4.0 | `mediocre`           |
+| >= 2.5 | `needs_help`         |
+| < 2.5  | `needs_serious_help` |
 
 ### Função de geração do roast
 
@@ -445,7 +475,7 @@ Your job is to roast the submitted code and produce a structured analysis.
 ### Fluxo completo (Server Action)
 
 ```
-usuário clica "$ roast_my_code"
+usuário clica "roast my code"
         ↓
 Server Action recebe { code, language }
         ↓
@@ -472,14 +502,14 @@ import { asc } from "drizzle-orm";
 export async function getLeaderboard(limit = 50) {
   return db
     .select({
-      id:         roasts.id,
-      slug:       roasts.slug,
-      score:      roasts.score,
-      verdict:    roasts.verdict,
-      language:   roasts.language,
-      lineCount:  roasts.lineCount,
+      id: roasts.id,
+      slug: roasts.slug,
+      score: roasts.score,
+      verdict: roasts.verdict,
+      language: roasts.language,
+      lineCount: roasts.lineCount,
       roastQuote: roasts.roastQuote,
-      createdAt:  roasts.createdAt,
+      createdAt: roasts.createdAt,
     })
     .from(roasts)
     .orderBy(asc(roasts.score)) // score mais baixo = mais vergonhoso = topo do leaderboard
@@ -499,7 +529,7 @@ export async function getRoastBySlug(slug: string) {
   const roast = await db.query.roasts.findFirst({
     where: eq(roasts.slug, slug),
     with: {
-      issues:    { orderBy: asc(roastIssues.order) },
+      issues: { orderBy: asc(roastIssues.order) },
       diffLines: { orderBy: asc(diffLines.lineNum) },
     },
   });
@@ -518,35 +548,38 @@ import type { RoastOutput } from "@/lib/ai/roast-schema";
 
 // Input é o output tipado do AI SDK + os campos de contexto da submissão
 interface CreateRoastInput extends RoastOutput {
-  code:     string;
+  code: string;
   language: string; // linguagem detectada/selecionada no editor
 }
 
 export async function createRoast(input: CreateRoastInput) {
-  const slug      = nanoid(12);
+  const slug = nanoid(12);
   const lineCount = input.code.split("\n").length;
 
   return db.transaction(async (tx) => {
-    const [roast] = await tx.insert(roasts).values({
-      slug,
-      code:         input.code,
-      language:     input.language as never, // cast para o enum
-      lineCount,
-      score:        input.score,
-      verdict:      input.verdict as never,
-      roastQuote:   input.roastQuote,
-      suggestedFix: null, // diff é salvo em diff_lines; este campo armazena o patch raw (opcional)
-    }).returning();
+    const [roast] = await tx
+      .insert(roasts)
+      .values({
+        slug,
+        code: input.code,
+        language: input.language as never, // cast para o enum
+        lineCount,
+        score: input.score,
+        verdict: input.verdict as never,
+        roastQuote: input.roastQuote,
+        suggestedFix: null, // diff é salvo em diff_lines; este campo armazena o patch raw (opcional)
+      })
+      .returning();
 
     if (input.issues.length > 0) {
       await tx.insert(roastIssues).values(
         input.issues.map((issue, order) => ({
-          roastId:     roast.id,
-          severity:    issue.severity as never,
-          title:       issue.title,
+          roastId: roast.id,
+          severity: issue.severity as never,
+          title: issue.title,
           description: issue.description,
           order,
-        }))
+        })),
       );
     }
 
@@ -554,10 +587,10 @@ export async function createRoast(input: CreateRoastInput) {
       await tx.insert(diffLines).values(
         input.suggestedFix.map((line, lineNum) => ({
           roastId: roast.id,
-          type:    line.type as never,
-          code:    line.code,
+          type: line.type as never,
+          code: line.code,
           lineNum,
-        }))
+        })),
       );
     }
 
@@ -570,18 +603,18 @@ export async function createRoast(input: CreateRoastInput) {
 
 ## Mapeamento Design → Schema
 
-| Tela (Pencil) | Elemento de UI | Campo no Schema |
-|---|---|---|
-| Screen 1 — Code Input | `2,847 codes roasted` | `SELECT COUNT(*) FROM roasts` |
-| Screen 1 — Code Input | `avg score: 4.2/10` | `SELECT AVG(score) FROM roasts` |
-| Screen 2 — Roast Results | Score Ring (`3.5`) | `roasts.score` |
-| Screen 2 — Roast Results | Badge verdict (`needs_serious_help`) | `roasts.verdict` |
-| Screen 2 — Roast Results | Roast quote | `roasts.roastQuote` |
-| Screen 2 — Roast Results | `lang: javascript · 7 lines` | `roasts.language`, `roasts.lineCount` |
-| Screen 2 — Roast Results | Issue Cards (critical/warning/good/info) | `roast_issues.severity`, `.title`, `.description` |
-| Screen 2 — Roast Results | Diff Block | `diff_lines.type`, `.code` |
-| Screen 3 — Shame Leaderboard | Entries com rank, score, linguagem | `roasts.*` ordenado por `score ASC` |
-| Screen 4 — OG Image | Score grande, verdict dot, quote | `roasts.score`, `roasts.verdict`, `roasts.roastQuote` |
+| Tela (Pencil)                | Elemento de UI                           | Campo no Schema                                       |
+| ---------------------------- | ---------------------------------------- | ----------------------------------------------------- |
+| Screen 1 — Code Input        | `2,847 codes roasted`                    | `SELECT COUNT(*) FROM roasts`                         |
+| Screen 1 — Code Input        | `avg score: 4.2/10`                      | `SELECT AVG(score) FROM roasts`                       |
+| Screen 2 — Roast Results     | Score Ring (`3.5`)                       | `roasts.score`                                        |
+| Screen 2 — Roast Results     | Badge verdict (`needs_serious_help`)     | `roasts.verdict`                                      |
+| Screen 2 — Roast Results     | Roast quote                              | `roasts.roastQuote`                                   |
+| Screen 2 — Roast Results     | `lang: javascript · 7 lines`             | `roasts.language`, `roasts.lineCount`                 |
+| Screen 2 — Roast Results     | Issue Cards (critical/warning/good/info) | `roast_issues.severity`, `.title`, `.description`     |
+| Screen 2 — Roast Results     | Diff Block                               | `diff_lines.type`, `.code`                            |
+| Screen 3 — Shame Leaderboard | Entries com rank, score, linguagem       | `roasts.*` ordenado por `score ASC`                   |
+| Screen 4 — OG Image          | Score grande, verdict dot, quote         | `roasts.score`, `roasts.verdict`, `roasts.roastQuote` |
 
 ---
 
@@ -638,7 +671,7 @@ export async function createRoast(input: CreateRoastInput) {
   2. Chama `generateRoast(code, language)` → `RoastOutput` via AI SDK
   3. Chama `createRoast({ ...roastOutput, code, language })` para persistir no banco
   4. Redireciona para `/roast/${slug}` via `redirect()`
-- [ ] Conectar o botão `$ roast_my_code` da homepage à Server Action (converter o componente em Client Component ou usar form action)
+- [ ] Conectar o botão `roast my code` da homepage à Server Action (converter o componente em Client Component ou usar form action)
 
 ### Seed (opcional, mas útil para dev)
 

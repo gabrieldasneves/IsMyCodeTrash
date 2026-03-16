@@ -25,6 +25,7 @@ Componentes de feature que orquestram dados e lógica:
 - Um arquivo por feature/página (`homepage-stats.tsx`, `roast-form.tsx`)
 
 **Exemplos:**
+
 - `HomepageStats` — async Server Component com `"use cache"`, chama `caller.stats.homepage()`, renderiza `StatsBar`
 - `HomepageLeaderboard` — async Server Component com `"use cache"`, chama `caller.leaderboard.preview()`
 - `LeaderboardPageContent` — async Server Component com `"use cache"`, chama `caller.leaderboard.page()`
@@ -73,7 +74,7 @@ export function RoastSubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={disabled || pending}>
-      {pending ? "$ roasting..." : "$ roast_my_code"}
+      {pending ? "$ roasting..." : "roast my code"}
     </Button>
   );
 }

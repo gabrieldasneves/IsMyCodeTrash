@@ -2,7 +2,7 @@
 
 ## Contexto
 
-A feature principal da aplicação. O usuário cola um trecho de código no editor, escolhe se quer análise normal ou roast mode (mais sarcástico), e clica em "$ roast_my_code". A IA analisa o código e redireciona para uma página de resultado com score, verdict, issues e diff de sugestão.
+A feature principal da aplicação. O usuário cola um trecho de código no editor, escolhe se quer análise normal ou roast mode (mais sarcástico), e clica em "roast my code". A IA analisa o código e redireciona para uma página de resultado com score, verdict, issues e diff de sugestão.
 
 Atualmente a Server Action `submitRoast` é um stub que cria um roast placeholder. A página `/roast/[id]` exibe dados estáticos hardcoded.
 
@@ -40,23 +40,41 @@ import { z } from "zod";
 // Schema da resposta da IA
 export const roastResponseSchema = z.object({
   score: z.number().min(0).max(10),
-  verdict: z.enum(["excellent", "acceptable", "mediocre", "needs_help", "needs_serious_help"]),
+  verdict: z.enum([
+    "excellent",
+    "acceptable",
+    "mediocre",
+    "needs_help",
+    "needs_serious_help",
+  ]),
   roastQuote: z.string().max(200), // frase de impacto, sarcástica ou direta
-  issues: z.array(z.object({
-    severity: z.enum(["critical", "warning", "good", "info"]),
-    title: z.string().max(80),
-    description: z.string().max(300),
-  })).min(1).max(6),
+  issues: z
+    .array(
+      z.object({
+        severity: z.enum(["critical", "warning", "good", "info"]),
+        title: z.string().max(80),
+        description: z.string().max(300),
+      }),
+    )
+    .min(1)
+    .max(6),
   suggestedFix: z.string().nullable(), // código melhorado (apenas o trecho corrigido)
-  diffLines: z.array(z.object({
-    type: z.enum(["removed", "added", "context"]),
-    code: z.string(),
-  })).nullable(), // diff unificado do fix
+  diffLines: z
+    .array(
+      z.object({
+        type: z.enum(["removed", "added", "context"]),
+        code: z.string(),
+      }),
+    )
+    .nullable(), // diff unificado do fix
 });
 
 export type RoastResponse = z.infer<typeof roastResponseSchema>;
 
-export async function analyzeCode(code: string, roastMode: boolean): Promise<RoastResponse> {
+export async function analyzeCode(
+  code: string,
+  roastMode: boolean,
+): Promise<RoastResponse> {
   const { object } = await generateObject({
     model: openai("gpt-4o-mini"),
     schema: roastResponseSchema,
@@ -67,6 +85,7 @@ export async function analyzeCode(code: string, roastMode: boolean): Promise<Roa
 ```
 
 **Prompts:**
+
 - **Normal mode**: análise técnica direta, score justo, issues com explicações claras
 - **Roast mode**: mesma análise, mas tom sarcástico/brutal no `roastQuote` e nas `descriptions`
 
@@ -89,6 +108,7 @@ A IA gera o score (0–10) e o verdict correspondente diretamente no objeto.
 ### `src/app/actions/roast.ts` — Server Action reescrita
 
 Fluxo completo:
+
 1. Valida `code` (tamanho mínimo/máximo)
 2. Lê `roastMode` do FormData
 3. Detecta linguagem via `highlight.js` auto-detection
@@ -107,6 +127,7 @@ Verificar se `createRoast` já recebe `diffLines` e `issues` na mesma transaçã
 ### `/roast/[id]/page.tsx` — Integração com dados reais
 
 Substituir `STATIC_ROAST` por query real:
+
 1. `await params` para obter o `id`
 2. Query `getRoastById(id)` que faz JOIN com `roastIssues` e `diffLines`
 3. `notFound()` se o roast não existir
