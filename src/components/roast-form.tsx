@@ -25,7 +25,7 @@ export function RoastForm() {
 			/>
 
 			{/* Actions Bar */}
-			<div className="flex w-full max-w-[780px] items-center justify-between">
+			<div className="flex w-full max-w-[780px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div className="flex items-center gap-4">
 					<Toggle name="roastMode" label="roast mode" defaultChecked />
 					<span className="font-sans text-xs text-[var(--color-text-tertiary)]">
@@ -37,6 +37,7 @@ export function RoastForm() {
 					variant="primary"
 					size="md"
 					disabled={submitDisabled}
+					className="w-full sm:w-auto"
 				>
 					$ roast_my_code
 				</Button>
