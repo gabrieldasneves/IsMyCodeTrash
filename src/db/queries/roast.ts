@@ -33,6 +33,37 @@ export interface RoastWithDetails extends Roast {
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
 /**
+ * Busca um roast completo pelo ID — usado na página /roast/[id] após submit.
+ * Faz 3 queries separadas e une no JS para evitar o uso de db.query (relations).
+ */
+export async function getRoastById(
+	id: string,
+): Promise<RoastWithDetails | null> {
+	const [roast] = await db
+		.select()
+		.from(roasts)
+		.where(eq(roasts.id, id))
+		.limit(1);
+
+	if (!roast) return null;
+
+	const [issues, diffs] = await Promise.all([
+		db
+			.select()
+			.from(roastIssues)
+			.where(eq(roastIssues.roastId, roast.id))
+			.orderBy(asc(roastIssues.order)),
+		db
+			.select()
+			.from(diffLines)
+			.where(eq(diffLines.roastId, roast.id))
+			.orderBy(asc(diffLines.lineNum)),
+	]);
+
+	return { ...roast, issues, diffLines: diffs };
+}
+
+/**
  * Busca um roast completo pelo slug — usado na página /roast/[slug] (Screen 2).
  * Faz 3 queries separadas e une no JS para evitar o uso de db.query (relations).
  */

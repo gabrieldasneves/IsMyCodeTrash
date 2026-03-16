@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { submitRoast } from "@/app/actions/roast";
-import { Button } from "@/components/ui/button";
 import { CodeEditor } from "@/components/ui/code-editor";
+import { RoastSubmitButton } from "@/components/ui/roast-submit-button";
 import { Toggle } from "@/components/ui/toggle";
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -32,15 +32,7 @@ export function RoastForm() {
 						{"// maximum sarcasm enabled"}
 					</span>
 				</div>
-				<Button
-					type="submit"
-					variant="primary"
-					size="md"
-					disabled={submitDisabled}
-					className="w-full sm:w-auto"
-				>
-					$ roast_my_code
-				</Button>
+				<RoastSubmitButton disabled={submitDisabled} />
 			</div>
 		</form>
 	);

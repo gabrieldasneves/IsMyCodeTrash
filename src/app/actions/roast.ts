@@ -1,39 +1,37 @@
 "use server";
 
+import hljs from "highlight.js";
 import { redirect } from "next/navigation";
+import { analyzeCode } from "@/lib/ai";
 import { createRoast } from "@/db/queries/roast";
+import { hljsToShiki } from "@/lib/languages";
 
 export async function submitRoast(formData: FormData) {
 	const code = (formData.get("code") as string | null)?.trim() ?? "";
+	const roastMode = formData.get("roastMode") === "on";
 
-	if (!code || code.length < 10) {
-		// Too short to roast — bounce back silently.
-		// Proper validation UI will be added when the editor gains client state.
-		return;
-	}
+	// ── Validation ────────────────────────────────────────────────────────────
+	if (!code || code.length < 10) return;
+	if (code.length > 10_000) return;
 
-	if (code.length > 10_000) {
-		return;
-	}
+	// ── Language detection ────────────────────────────────────────────────────
+	const detected = hljs.highlightAuto(code);
+	const language = hljsToShiki(detected.language) ?? "plaintext";
 
-	// TODO: replace stub with real AI call once the AI SDK integration is wired up.
-	// For now, create a placeholder roast so the DB flow is exercisable end-to-end.
+	// ── AI analysis ───────────────────────────────────────────────────────────
+	const analysis = await analyzeCode(code, roastMode);
+
+	// ── Persist ───────────────────────────────────────────────────────────────
 	const roast = await createRoast({
 		code,
-		language: "plaintext",
-		score: 5.0,
-		verdict: "mediocre",
-		roastQuote: "this code exists. that's about all we can say.",
-		issues: [
-			{
-				severity: "info",
-				title: "ai roasting coming soon",
-				description:
-					"the ai integration is not yet wired up. this is a placeholder roast.",
-			},
-		],
-		suggestedFix: null,
+		language,
+		score: analysis.score,
+		verdict: analysis.verdict,
+		roastQuote: analysis.roastQuote,
+		issues: analysis.issues,
+		suggestedFix: analysis.diffLines,
 	});
 
+	// ── Redirect to result page ───────────────────────────────────────────────
 	redirect(`/roast/${roast.id}`);
 }

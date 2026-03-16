@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/ui/navbar";
@@ -25,10 +26,12 @@ export default function RootLayout({
 		<html lang="pt-BR" className={jetBrainsMono.variable}>
 			<body>
 				<TRPCReactProvider>
-					<ThemeProvider>
-						<Navbar />
-						{children}
-					</ThemeProvider>
+					<Suspense>
+						<ThemeProvider>
+							<Navbar />
+							{children}
+						</ThemeProvider>
+					</Suspense>
 				</TRPCReactProvider>
 			</body>
 		</html>
