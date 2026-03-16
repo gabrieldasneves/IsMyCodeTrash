@@ -19,7 +19,7 @@ export default function HomePage() {
 				{/* ── Hero ──────────────────────────────────────────────────── */}
 				<section className="flex flex-col gap-3 mb-10">
 					<div className="flex items-center gap-3">
-						<span className="font-mono text-4xl font-bold text-[var(--color-accent)]">$</span>
+						<span className="font-mono text-4xl font-bold text-emerald-500">$</span>
 						<h1 className="font-mono text-4xl font-bold text-[var(--color-text-primary)]">
 							paste your code. get roasted.
 						</h1>

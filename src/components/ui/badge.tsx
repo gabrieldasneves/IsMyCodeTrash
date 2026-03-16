@@ -7,7 +7,7 @@ const badge = tv({
 		variant: {
 			critical: "text-red-500",
 			warning: "text-amber-500",
-			good: "text-[var(--color-accent)]",
+			good: "text-emerald-500",
 			info: "text-blue-400",
 			muted: "text-[var(--color-text-tertiary)]",
 		},
@@ -23,7 +23,7 @@ const dot = tv({
 		variant: {
 			critical: "bg-red-500",
 			warning: "bg-amber-500",
-			good: "bg-[var(--color-accent)]",
+			good: "bg-emerald-500",
 			info: "bg-blue-400",
 			muted: "bg-[var(--color-text-tertiary)]",
 		},

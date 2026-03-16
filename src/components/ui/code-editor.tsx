@@ -163,7 +163,7 @@ export function CodeEditor({
 						aria-hidden="true"
 					/>
 					<span
-						className="size-3 rounded-full bg-[var(--color-accent)]"
+						className="size-3 rounded-full bg-emerald-500"
 						aria-hidden="true"
 					/>
 				</div>

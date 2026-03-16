@@ -12,7 +12,7 @@ const card = tv({
 		severity: {
 			critical: "border-l-2 border-l-red-500",
 			warning: "border-l-2 border-l-amber-500",
-			good: "border-l-2 border-l-[var(--color-accent)]",
+			good: "border-l-2 border-l-emerald-500",
 			info: "border-l-2 border-l-blue-400",
 		},
 	},

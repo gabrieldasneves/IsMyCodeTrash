@@ -12,11 +12,11 @@ const button = tv({
 	variants: {
 		variant: {
 			primary:
-				"bg-[var(--color-accent)] text-zinc-950 not-disabled:hover:bg-[#ff3038] focus-visible:ring-[var(--color-accent)]",
+				"bg-emerald-500 text-zinc-950 not-disabled:hover:bg-emerald-400 focus-visible:ring-emerald-500",
 			secondary:
 				"bg-zinc-800 text-zinc-100 not-disabled:hover:bg-zinc-700 focus-visible:ring-zinc-500",
 			outline:
-				"border border-[var(--color-accent)] text-[var(--color-accent)] bg-transparent not-disabled:hover:bg-[var(--color-accent)] not-disabled:hover:text-zinc-950 focus-visible:ring-[var(--color-accent)]",
+				"border border-emerald-500 text-emerald-500 bg-transparent not-disabled:hover:bg-emerald-500 not-disabled:hover:text-zinc-950 focus-visible:ring-emerald-500",
 			ghost:
 				"bg-transparent text-zinc-400 not-disabled:hover:bg-zinc-800 not-disabled:hover:text-zinc-100 focus-visible:ring-zinc-500",
 			destructive:

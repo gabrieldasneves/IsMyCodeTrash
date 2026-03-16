@@ -13,7 +13,7 @@ export function LeaderboardPreviewSkeleton() {
 			{/* ── Section header ─────────────────────────────────────────── */}
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
-					<span className="font-mono text-sm font-bold text-[var(--color-accent)]">{"//"}</span>
+					<span className="font-mono text-sm font-bold text-emerald-500">{"//"}</span>
 					<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
 						shame_leaderboard
 					</span>

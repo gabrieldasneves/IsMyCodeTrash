@@ -16,7 +16,7 @@ export interface LeaderboardEntryProps {
 function scoreColor(score: number) {
 	if (score <= 3) return "text-red-500";
 	if (score <= 6) return "text-amber-500";
-	return "text-[var(--color-accent)]";
+	return "text-emerald-500";
 }
 
 function rankColor(rank: number) {

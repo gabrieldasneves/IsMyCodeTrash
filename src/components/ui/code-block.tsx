@@ -35,7 +35,7 @@ export function CodeBlockHeader({
 		>
 			<span className="size-2.5 rounded-full bg-red-500" aria-hidden />
 			<span className="size-2.5 rounded-full bg-amber-500" aria-hidden />
-			<span className="size-2.5 rounded-full bg-[var(--color-accent)]" aria-hidden />
+			<span className="size-2.5 rounded-full bg-emerald-500" aria-hidden />
 			<span className="flex-1" />
 			{fileName && (
 				<span className="font-mono text-xs text-[var(--color-text-tertiary)]">

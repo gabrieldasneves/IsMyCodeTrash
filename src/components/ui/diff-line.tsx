@@ -19,7 +19,7 @@ const prefix = tv({
 	base: "select-none shrink-0 w-3 text-center",
 	variants: {
 		type: {
-			added: "text-[var(--color-accent)]",
+			added: "text-emerald-500",
 			removed: "text-red-500",
 			context: "text-[var(--color-text-tertiary)]",
 		},
