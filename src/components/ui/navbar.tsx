@@ -7,7 +7,7 @@ export function Navbar() {
 			<nav className="flex h-14 items-center justify-between px-10">
 				{/* Logo */}
 				<Link href="/" className="flex items-center gap-2 no-underline">
-					<span className="font-mono text-xl font-bold text-emerald-500">
+					<span className="font-mono text-xl font-bold text-[#7c3aed]">
 						{">"}
 					</span>
 					<span className="font-mono text-lg font-medium text-[var(--color-text-primary)]">
