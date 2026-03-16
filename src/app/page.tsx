@@ -1,28 +1,17 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { RoastForm } from "@/components/roast-form";
-import { Button } from "@/components/ui/button";
-import { LeaderboardRow } from "@/components/ui/leaderboard-row";
-import { StatsBarSkeleton } from "@/components/ui/stats-bar-skeleton";
+import { HomepageLeaderboard } from "@/components/homepage-leaderboard";
 import { HomepageStats } from "@/components/homepage-stats";
-import { getLeaderboard } from "@/db/queries/leaderboard";
-import { getHomepageStats } from "@/db/queries/stats";
+import { LeaderboardPreviewSkeleton } from "@/components/ui/leaderboard-preview-skeleton";
+import { StatsBarSkeleton } from "@/components/ui/stats-bar-skeleton";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function HomePage() {
-	// Dispara o prefetch das métricas no servidor (streaming para o cliente)
+export default function HomePage() {
+	// Dispara ambos os prefetches em paralelo no servidor antes de renderizar
 	prefetch(trpc.stats.homepage.queryOptions());
-
-	// Mantido para alimentar o leaderboard preview e o contador "showing top X of Y"
-	const [leaderboard, stats] = await Promise.all([
-		getLeaderboard(3),
-		getHomepageStats(),
-	]);
-
-	const totalFormatted = stats.totalRoasts.toLocaleString("en-US");
-	// avgFormatted não é mais necessário aqui — métricas renderizadas pelo HomepageStats via tRPC
+	prefetch(trpc.leaderboard.preview.queryOptions());
 
 	return (
 		<main className="min-h-screen bg-[var(--color-bg-page)]">
@@ -30,112 +19,32 @@ export default async function HomePage() {
 				{/* ── Hero ──────────────────────────────────────────────────── */}
 				<section className="flex flex-col gap-3 mb-10">
 					<div className="flex items-center gap-3">
-						<span className="font-mono text-4xl font-bold text-emerald-500">
-							$
-						</span>
+						<span className="font-mono text-4xl font-bold text-emerald-500">$</span>
 						<h1 className="font-mono text-4xl font-bold text-[var(--color-text-primary)]">
 							paste your code. get roasted.
 						</h1>
 					</div>
 					<p className="font-sans text-sm text-[var(--color-text-secondary)]">
-						{
-							"// drop your code below and we'll rate it — brutally honest or full roast mode"
-						}
+						{"// drop your code below and we'll rate it — brutally honest or full roast mode"}
 					</p>
 				</section>
 
 				{/* ── Code Input ────────────────────────────────────────────── */}
 				<RoastForm />
 
-				{/* Stats animadas via tRPC + NumberFlow */}
+				{/* ── Stats + Leaderboard via tRPC + Suspense ───────────────── */}
 				<HydrateClient>
 					<Suspense fallback={<StatsBarSkeleton />}>
 						<HomepageStats />
 					</Suspense>
+
+					{/* ── Spacer ──────────────────────────────────────────────── */}
+					<div className="h-16" />
+
+					<Suspense fallback={<LeaderboardPreviewSkeleton />}>
+						<HomepageLeaderboard />
+					</Suspense>
 				</HydrateClient>
-
-				{/* ── Spacer ────────────────────────────────────────────────── */}
-				<div className="h-16" />
-
-				{/* ── Shame Leaderboard Preview ─────────────────────────────── */}
-				<section className="flex flex-col gap-6">
-					{/* Section header */}
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<span className="font-mono text-sm font-bold text-emerald-500">
-								{"//"}
-							</span>
-							<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
-								shame_leaderboard
-							</span>
-						</div>
-						<Link href="/leaderboard">
-							<Button variant="outline" size="sm">
-								$ view_all {">>"}
-							</Button>
-						</Link>
-					</div>
-
-					<p className="font-sans text-sm text-[var(--color-text-tertiary)]">
-						{"// the worst code on the internet, ranked by shame"}
-					</p>
-
-					{/* Table */}
-					<div className="border border-[var(--color-border-primary)]">
-						{/* Table header */}
-						<div className="flex h-10 items-center gap-6 border-b border-[var(--color-border-primary)] bg-[var(--color-bg-surface)] px-5">
-							<span className="w-10 shrink-0 font-mono text-xs font-medium text-[var(--color-text-tertiary)]">
-								#
-							</span>
-							<span className="w-14 shrink-0 font-mono text-xs font-medium text-[var(--color-text-tertiary)]">
-								score
-							</span>
-							<span className="flex-1 font-mono text-xs font-medium text-[var(--color-text-tertiary)]">
-								code
-							</span>
-							<span className="w-24 shrink-0 text-right font-mono text-xs font-medium text-[var(--color-text-tertiary)]">
-								lang
-							</span>
-						</div>
-
-						{/* Rows */}
-						{leaderboard.length === 0 ? (
-							<div className="flex items-center justify-center px-5 py-10">
-								<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
-									{/* no roasts yet. be the first. */}
-								</span>
-							</div>
-						) : (
-							leaderboard.map((entry, i) => (
-								<Link
-									key={entry.id}
-									href={`/roast/${entry.id}`}
-									className="block hover:bg-[var(--color-bg-surface)] transition-colors"
-								>
-									<LeaderboardRow
-										rank={i + 1}
-										score={entry.score}
-										codePreview={entry.roastQuote}
-										language={entry.language}
-									/>
-								</Link>
-							))
-						)}
-					</div>
-
-					{/* Footer hint */}
-					<div className="flex items-center justify-center py-1">
-						<span className="font-sans text-xs text-[var(--color-text-tertiary)]">
-							showing top {leaderboard.length} of {totalFormatted} ·{" "}
-							<Link
-								href="/leaderboard"
-								className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-							>
-								view full leaderboard {">>"}
-							</Link>
-						</span>
-					</div>
-				</section>
 			</div>
 		</main>
 	);

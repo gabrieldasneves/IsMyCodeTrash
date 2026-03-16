@@ -1,4 +1,4 @@
-import { asc } from "drizzle-orm";
+import { asc, count } from "drizzle-orm";
 import { db } from "@/db";
 import type { Roast } from "@/db/schema";
 import { roasts } from "@/db/schema";
@@ -36,4 +36,33 @@ export async function getLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
 		.from(roasts)
 		.orderBy(asc(roasts.score))
 		.limit(limit);
+}
+
+/**
+ * Retorna os 3 piores roasts + total de roasts em uma única query.
+ * Usado exclusivamente no preview da homepage via tRPC.
+ */
+export async function getLeaderboardPreview(): Promise<{
+	entries: LeaderboardEntry[];
+	totalRoasts: number;
+}> {
+	const [entries, [{ value: totalRoasts }]] = await Promise.all([
+		db
+			.select({
+				id: roasts.id,
+				slug: roasts.slug,
+				score: roasts.score,
+				verdict: roasts.verdict,
+				language: roasts.language,
+				lineCount: roasts.lineCount,
+				roastQuote: roasts.roastQuote,
+				createdAt: roasts.createdAt,
+			})
+			.from(roasts)
+			.orderBy(asc(roasts.score))
+			.limit(3),
+		db.select({ value: count() }).from(roasts),
+	]);
+
+	return { entries, totalRoasts: totalRoasts ?? 0 };
 }
