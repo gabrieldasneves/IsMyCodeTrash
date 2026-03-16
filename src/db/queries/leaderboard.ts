@@ -16,6 +16,9 @@ export type LeaderboardEntry = Pick<
 	| "createdAt"
 >;
 
+// Entrada do preview da homepage — inclui o código para exibição
+export type LeaderboardPreviewEntry = LeaderboardEntry & Pick<Roast, "code">;
+
 /**
  * Retorna os roasts ordenados por score ASC (pior score = topo do leaderboard).
  * Todos os roasts são públicos — sem filtro de visibilidade.
@@ -39,11 +42,11 @@ export async function getLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
 }
 
 /**
- * Retorna os 3 piores roasts + total de roasts em uma única query.
+ * Retorna os 3 piores roasts (com código) + total de roasts em paralelo.
  * Usado exclusivamente no preview da homepage via tRPC.
  */
 export async function getLeaderboardPreview(): Promise<{
-	entries: LeaderboardEntry[];
+	entries: LeaderboardPreviewEntry[];
 	totalRoasts: number;
 }> {
 	const [entries, [{ value: totalRoasts }]] = await Promise.all([
@@ -57,6 +60,7 @@ export async function getLeaderboardPreview(): Promise<{
 				lineCount: roasts.lineCount,
 				roastQuote: roasts.roastQuote,
 				createdAt: roasts.createdAt,
+				code: roasts.code,
 			})
 			.from(roasts)
 			.orderBy(asc(roasts.score))

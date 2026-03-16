@@ -36,11 +36,11 @@ export function HomepageLeaderboard() {
 			{/* ── Table ───────────────────────────────────────────────────── */}
 			<div className="border border-[var(--color-border-primary)]">
 				{/* Table header */}
-				<div className="flex h-10 items-center gap-6 border-b border-[var(--color-border-primary)] bg-[var(--color-bg-surface)] px-5">
-					<span className="w-10 shrink-0 font-mono text-xs font-medium text-[var(--color-text-tertiary)]">#</span>
-					<span className="w-14 shrink-0 font-mono text-xs font-medium text-[var(--color-text-tertiary)]">score</span>
+				<div className="flex h-10 items-center gap-4 border-b border-[var(--color-border-primary)] bg-[var(--color-bg-surface)] px-5">
+					<span className="font-mono text-xs font-medium text-[var(--color-text-tertiary)]">#</span>
+					<span className="font-mono text-xs font-medium text-[var(--color-text-tertiary)]">score</span>
 					<span className="flex-1 font-mono text-xs font-medium text-[var(--color-text-tertiary)]">code</span>
-					<span className="w-24 shrink-0 text-right font-mono text-xs font-medium text-[var(--color-text-tertiary)]">lang</span>
+					<span className="font-mono text-xs font-medium text-[var(--color-text-tertiary)]">lang</span>
 				</div>
 
 				{/* Rows */}
@@ -60,7 +60,7 @@ export function HomepageLeaderboard() {
 							<LeaderboardRow
 								rank={i + 1}
 								score={entry.score}
-								codePreview={entry.roastQuote}
+								code={entry.code}
 								language={entry.language}
 							/>
 						</Link>

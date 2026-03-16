@@ -276,25 +276,25 @@ async function fetchUser(id: string): Promise<User> {
 							<LeaderboardRow
 								rank={1}
 								score={2.1}
-								codePreview="function calculateTotal(items) { var total = 0; ..."
+								code={"function calculateTotal(items) {\n  var total = 0;\n  // TODO: implement\n}"}
 								language="javascript"
 							/>
 							<LeaderboardRow
 								rank={2}
 								score={4.8}
-								codePreview="class UserService { constructor(db) { this.db = db; ..."
+								code={"class UserService {\n  constructor(db) {\n    this.db = db;\n  }\n}"}
 								language="typescript"
 							/>
 							<LeaderboardRow
 								rank={3}
 								score={7.3}
-								codePreview="const fetchUser = async (id) => await db.find(id);"
+								code={"const fetchUser = async (id) =>\n  await db.find(id);"}
 								language="typescript"
 							/>
 							<LeaderboardRow
 								rank={4}
 								score={9.1}
-								codePreview="export const sum = (a: number, b: number) => a + b;"
+								code={"export const sum = (a: number, b: number) => a + b;"}
 								language="typescript"
 							/>
 						</div>
