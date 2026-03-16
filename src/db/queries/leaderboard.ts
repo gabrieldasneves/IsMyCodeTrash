@@ -1,4 +1,5 @@
 import { asc, avg, count, sql } from "drizzle-orm";
+import { cacheLife } from "next/cache";
 import { db } from "@/db";
 import type { Roast } from "@/db/schema";
 import { roasts } from "@/db/schema";
@@ -49,6 +50,9 @@ export async function getLeaderboardPreview(): Promise<{
 	entries: LeaderboardPreviewEntry[];
 	totalRoasts: number;
 }> {
+	"use cache";
+	cacheLife("hours");
+
 	const [entries, [{ value: totalRoasts }]] = await Promise.all([
 		db
 			.select({
@@ -80,6 +84,9 @@ export async function getLeaderboardPage(): Promise<{
 	totalRoasts: number;
 	averageScore: number | null;
 }> {
+	"use cache";
+	cacheLife("hours");
+
 	const [entries, [stats]] = await Promise.all([
 		db
 			.select({

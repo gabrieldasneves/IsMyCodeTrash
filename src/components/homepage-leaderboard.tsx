@@ -1,16 +1,15 @@
-"use client";
-
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { cacheLife } from "next/cache";
 import Link from "next/link";
-import { useTRPC } from "@/trpc/client";
+import { caller } from "@/trpc/server";
 import { Button } from "@/components/ui/button";
 import { LeaderboardRow } from "@/components/ui/leaderboard-row";
 
-export function HomepageLeaderboard() {
-	const trpc = useTRPC();
-	const { data } = useSuspenseQuery(trpc.leaderboard.preview.queryOptions());
+export async function HomepageLeaderboard() {
+	"use cache";
+	cacheLife("hours");
 
-	const { entries, totalRoasts } = data;
+	const { entries, totalRoasts } = await caller.leaderboard.preview();
+
 	const totalFormatted = totalRoasts.toLocaleString("en-US");
 
 	return (

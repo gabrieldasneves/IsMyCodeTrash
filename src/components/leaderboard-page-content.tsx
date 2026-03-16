@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { caller } from "@/trpc/server";
 import { LeaderboardEntry } from "@/components/ui/leaderboard-entry";
@@ -6,6 +7,9 @@ import type { BundledLanguage } from "shiki";
 // Server Component assíncrono — usa caller direto para dados que não precisam
 // ser hidratados no cliente. Permite usar o LeaderboardEntry (Shiki async Server Component).
 export async function LeaderboardPageContent() {
+	"use cache";
+	cacheLife("hours");
+
 	const { entries, totalRoasts, averageScore } = await caller.leaderboard.page();
 
 	const totalFormatted = totalRoasts.toLocaleString("en-US");

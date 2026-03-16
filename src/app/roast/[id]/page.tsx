@@ -129,31 +129,19 @@ function verdictToBadgeVariant(
 
 // ─── SSR Metadata ─────────────────────────────────────────────────────────────
 
-export async function generateMetadata({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-	const { id } = await params;
-	return {
-		title: `Roast ${id.slice(0, 8)}… — CodeRoaster`,
-		description: `"${STATIC_ROAST.roastQuote}" — score: ${STATIC_ROAST.score}/10`,
-		openGraph: {
-			title: "CodeRoaster — Roast Results",
-			description: STATIC_ROAST.roastQuote,
-		},
-	};
-}
+export const metadata: Metadata = {
+	title: "Roast Results — CodeRoaster",
+	description: `"${STATIC_ROAST.roastQuote}" — score: ${STATIC_ROAST.score}/10`,
+	openGraph: {
+		title: "CodeRoaster — Roast Results",
+		description: STATIC_ROAST.roastQuote,
+	},
+};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function RoastResultPage({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
-	// UUID param — will be used to fetch from DB once real data is wired up
-	await params;
+export default async function RoastResultPage() {
+	"use cache";
 
 	const roast = STATIC_ROAST;
 	const badgeVariant = verdictToBadgeVariant(roast.verdict);

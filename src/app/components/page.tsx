@@ -66,6 +66,7 @@ function Label({ tag, children }: { tag: string; children: React.ReactNode }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function ComponentsPage() {
+	"use cache";
 	return (
 		<div className="min-h-screen bg-[var(--color-bg-page)] px-10 py-12">
 			{/* Header */}

@@ -1,4 +1,5 @@
 import { avg, count, sql } from "drizzle-orm";
+import { cacheLife } from "next/cache";
 import { db } from "@/db";
 import { roasts } from "@/db/schema";
 
@@ -33,6 +34,9 @@ export async function getHomepageStats(): Promise<{
 	totalRoasts: number;
 	averageScore: number | null;
 }> {
+	"use cache";
+	cacheLife("hours");
+
 	const [result] = await db
 		.select({
 			totalRoasts: count(),

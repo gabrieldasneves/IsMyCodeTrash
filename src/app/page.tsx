@@ -4,18 +4,10 @@ import { HomepageLeaderboard } from "@/components/homepage-leaderboard";
 import { HomepageStats } from "@/components/homepage-stats";
 import { LeaderboardPreviewSkeleton } from "@/components/ui/leaderboard-preview-skeleton";
 import { StatsBarSkeleton } from "@/components/ui/stats-bar-skeleton";
-import { HydrateClient, prefetch, trpc } from "@/trpc/server";
-
-// Revalida a página a cada hora — evita bater no banco a cada request
-export const revalidate = 3600;
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
-	// Dispara ambos os prefetches em paralelo no servidor antes de renderizar
-	prefetch(trpc.stats.homepage.queryOptions());
-	prefetch(trpc.leaderboard.preview.queryOptions());
-
 	return (
 		<main className="min-h-screen bg-[var(--color-bg-page)]">
 			<div className="mx-auto max-w-5xl px-10 py-20">
@@ -35,19 +27,18 @@ export default function HomePage() {
 				{/* ── Code Input ────────────────────────────────────────────── */}
 				<RoastForm />
 
-				{/* ── Stats + Leaderboard via tRPC + Suspense ───────────────── */}
-				<HydrateClient>
-					<Suspense fallback={<StatsBarSkeleton />}>
-						<HomepageStats />
-					</Suspense>
+				{/* ── Stats animadas (cacheadas 1h) ─────────────────────────── */}
+				<Suspense fallback={<StatsBarSkeleton />}>
+					<HomepageStats />
+				</Suspense>
 
-					{/* ── Spacer ──────────────────────────────────────────────── */}
-					<div className="h-16" />
+				{/* ── Spacer ────────────────────────────────────────────────── */}
+				<div className="h-16" />
 
-					<Suspense fallback={<LeaderboardPreviewSkeleton />}>
-						<HomepageLeaderboard />
-					</Suspense>
-				</HydrateClient>
+				{/* ── Shame leaderboard preview (cacheado 1h) ───────────────── */}
+				<Suspense fallback={<LeaderboardPreviewSkeleton />}>
+					<HomepageLeaderboard />
+				</Suspense>
 			</div>
 		</main>
 	);

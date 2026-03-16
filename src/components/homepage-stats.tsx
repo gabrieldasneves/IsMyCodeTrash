@@ -1,17 +1,12 @@
-"use client";
-
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
+import { cacheLife } from "next/cache";
+import { caller } from "@/trpc/server";
 import { StatsBar } from "@/components/ui/stats-bar";
 
-export function HomepageStats() {
-	const trpc = useTRPC();
-	const { data } = useSuspenseQuery(trpc.stats.homepage.queryOptions());
+export async function HomepageStats() {
+	"use cache";
+	cacheLife("hours");
 
-	return (
-		<StatsBar
-			totalRoasts={data.totalRoasts}
-			averageScore={data.averageScore}
-		/>
-	);
+	const { totalRoasts, averageScore } = await caller.stats.homepage();
+
+	return <StatsBar totalRoasts={totalRoasts} averageScore={averageScore} />;
 }
