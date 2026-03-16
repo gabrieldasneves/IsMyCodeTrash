@@ -1,8 +1,6 @@
-import { createOpenAI } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
-
-const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // ─── Response schema ──────────────────────────────────────────────────────────
 
@@ -96,10 +94,10 @@ ${code}
 
 export async function analyzeCode(code: string, roastMode: boolean): Promise<RoastResponse> {
 	const { object } = await generateObject({
-		model: openai("gpt-4o-mini"),
+		model: anthropic("claude-sonnet-4-5"),
 		schema: roastResponseSchema,
 		prompt: buildPrompt(code, roastMode),
-		temperature: roastMode ? 0.9 : 0.4,
+		temperature: roastMode ? 1.0 : 0.5,
 	});
 
 	return object;
