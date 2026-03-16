@@ -6,6 +6,9 @@ import { LeaderboardPreviewSkeleton } from "@/components/ui/leaderboard-preview-
 import { StatsBarSkeleton } from "@/components/ui/stats-bar-skeleton";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
+// Revalida a página a cada hora — evita bater no banco a cada request
+export const revalidate = 3600;
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {

@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { LeaderboardPageContent } from "@/components/leaderboard-page-content";
 import { LeaderboardPageSkeleton } from "@/components/ui/leaderboard-page-skeleton";
 
+// Revalida a página a cada hora — evita bater no banco a cada request
+export const revalidate = 3600;
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
