@@ -73,7 +73,7 @@ export default async function LeaderboardPage() {
 				{/* ── Hero ────────────────────────────────────────────────────── */}
 				<section className="flex flex-col gap-4">
 					<div className="flex items-center gap-3">
-						<span className="font-mono text-3xl font-bold text-emerald-500">
+						<span className="font-mono text-3xl font-bold text-[var(--color-accent)]">
 							&gt;
 						</span>
 						<h1 className="font-mono text-3xl font-bold text-[var(--color-text-primary)]">

@@ -17,7 +17,7 @@ const scoreNumber = tv({
 		color: {
 			critical: "text-red-500",
 			warning: "text-amber-500",
-			good: "text-emerald-500",
+			good: "text-[var(--color-accent)]",
 		},
 	},
 });

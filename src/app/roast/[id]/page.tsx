@@ -209,7 +209,7 @@ export default async function RoastResultPage({
 				{/* ── Submitted Code ────────────────────────────────────────────── */}
 				<section className="flex flex-col gap-4">
 					<div className="flex items-center gap-2">
-						<span className="font-mono text-sm font-bold text-emerald-500">
+						<span className="font-mono text-sm font-bold text-[var(--color-accent)]">
 							{"//"}
 						</span>
 						<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
@@ -233,7 +233,7 @@ export default async function RoastResultPage({
 				{/* ── Detailed Analysis ─────────────────────────────────────────── */}
 				<section className="flex flex-col gap-6">
 					<div className="flex items-center gap-2">
-						<span className="font-mono text-sm font-bold text-emerald-500">
+						<span className="font-mono text-sm font-bold text-[var(--color-accent)]">
 							{"//"}
 						</span>
 						<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
@@ -259,7 +259,7 @@ export default async function RoastResultPage({
 				{/* ── Suggested Fix (diff) ──────────────────────────────────────── */}
 				<section className="flex flex-col gap-6">
 					<div className="flex items-center gap-2">
-						<span className="font-mono text-sm font-bold text-emerald-500">
+						<span className="font-mono text-sm font-bold text-[var(--color-accent)]">
 							{"//"}
 						</span>
 						<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
@@ -276,7 +276,7 @@ export default async function RoastResultPage({
 								aria-hidden
 							/>
 							<span
-								className="size-2.5 rounded-full bg-emerald-500"
+								className="size-2.5 rounded-full bg-[var(--color-accent)]"
 								aria-hidden
 							/>
 							<span className="flex-1" />
