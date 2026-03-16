@@ -7,8 +7,6 @@ import { z } from "zod";
 export const roastResponseSchema = z.object({
 	score: z
 		.number()
-		.min(0)
-		.max(10)
 		.describe("Code quality score from 0.0 (worst) to 10.0 (best), one decimal place"),
 	verdict: z
 		.enum(["excellent", "acceptable", "mediocre", "needs_help", "needs_serious_help"])
@@ -17,24 +15,20 @@ export const roastResponseSchema = z.object({
 		),
 	roastQuote: z
 		.string()
-		.max(200)
-		.describe("One punchy sentence summarizing the code quality — the headline of the roast"),
+		.describe("One punchy sentence summarizing the code quality — the headline of the roast (max 200 chars)"),
 	issues: z
 		.array(
 			z.object({
 				severity: z
 					.enum(["critical", "warning", "good", "info"])
 					.describe("critical: serious problem, warning: needs attention, good: positive point, info: neutral observation"),
-				title: z.string().max(80).describe("Short title of the issue (max 8 words)"),
+				title: z.string().describe("Short title of the issue (max 8 words)"),
 				description: z
 					.string()
-					.max(300)
-					.describe("Clear explanation of why this is an issue and what to do about it"),
+					.describe("Clear explanation of why this is an issue and what to do about it (max 300 chars)"),
 			}),
 		)
-		.min(2)
-		.max(6)
-		.describe("List of code issues found. Always include at least one 'good' severity if the code has any redeeming qualities."),
+		.describe("List of code issues found (2-6 items). Always include at least one 'good' severity if the code has any redeeming qualities."),
 	diffLines: z
 		.array(
 			z.object({
