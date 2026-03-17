@@ -31,7 +31,9 @@ export function StatsBar({ totalRoasts, averageScore }: StatsBarProps) {
 				codes roasted
 			</span>
 
-			<span className="font-mono text-xs text-[var(--color-text-tertiary)]">·</span>
+			<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
+				·
+			</span>
 
 			<span className="font-sans text-xs text-[var(--color-text-tertiary)]">
 				avg score:{" "}

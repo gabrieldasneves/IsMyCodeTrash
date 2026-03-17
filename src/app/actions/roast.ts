@@ -2,8 +2,8 @@
 
 import hljs from "highlight.js";
 import { redirect } from "next/navigation";
-import { analyzeCode } from "@/lib/ai";
 import { createRoast } from "@/db/queries/roast";
+import { analyzeCode } from "@/lib/ai";
 import { hljsToShiki } from "@/lib/languages";
 
 export async function submitRoast(formData: FormData) {

@@ -103,10 +103,12 @@ export async function getLeaderboardPage(): Promise<{
 			.from(roasts)
 			.orderBy(asc(roasts.score))
 			.limit(20),
-		db.select({
-			totalRoasts: count(),
-			averageScore: sql<number>`round(${avg(roasts.score)}::numeric, 1)`,
-		}).from(roasts),
+		db
+			.select({
+				totalRoasts: count(),
+				averageScore: sql<number>`round(${avg(roasts.score)}::numeric, 1)`,
+			})
+			.from(roasts),
 	]);
 
 	return {

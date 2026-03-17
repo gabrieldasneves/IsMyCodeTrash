@@ -7,35 +7,55 @@ import { z } from "zod";
 export const roastResponseSchema = z.object({
 	score: z
 		.number()
-		.describe("Code quality score from 0.0 (worst) to 10.0 (best), one decimal place"),
+		.describe(
+			"Code quality score from 0.0 (worst) to 10.0 (best), one decimal place",
+		),
 	verdict: z
-		.enum(["excellent", "acceptable", "mediocre", "needs_help", "needs_serious_help"])
+		.enum([
+			"excellent",
+			"acceptable",
+			"mediocre",
+			"needs_help",
+			"needs_serious_help",
+		])
 		.describe(
 			"Verdict based on score: excellent (>=8), acceptable (>=6), mediocre (>=4), needs_help (>=2.5), needs_serious_help (<2.5)",
 		),
 	roastQuote: z
 		.string()
-		.describe("One punchy sentence summarizing the code quality — the headline of the roast (max 200 chars)"),
+		.describe(
+			"One punchy sentence summarizing the code quality — the headline of the roast (max 200 chars)",
+		),
 	issues: z
 		.array(
 			z.object({
 				severity: z
 					.enum(["critical", "warning", "good", "info"])
-					.describe("critical: serious problem, warning: needs attention, good: positive point, info: neutral observation"),
+					.describe(
+						"critical: serious problem, warning: needs attention, good: positive point, info: neutral observation",
+					),
 				title: z.string().describe("Short title of the issue (max 8 words)"),
 				description: z
 					.string()
-					.describe("Clear explanation of why this is an issue and what to do about it (max 300 chars)"),
+					.describe(
+						"Clear explanation of why this is an issue and what to do about it (max 300 chars)",
+					),
 			}),
 		)
-		.describe("List of code issues found (2-6 items). Always include at least one 'good' severity if the code has any redeeming qualities."),
+		.describe(
+			"List of code issues found (2-6 items). Always include at least one 'good' severity if the code has any redeeming qualities.",
+		),
 	diffLines: z
 		.array(
 			z.object({
 				type: z
 					.enum(["removed", "added", "context"])
-					.describe("removed: line to delete, added: line to add, context: unchanged surrounding line"),
-				code: z.string().describe("The line of code (without leading +/- markers)"),
+					.describe(
+						"removed: line to delete, added: line to add, context: unchanged surrounding line",
+					),
+				code: z
+					.string()
+					.describe("The line of code (without leading +/- markers)"),
 			}),
 		)
 		.nullable()
@@ -86,7 +106,10 @@ ${code}
 
 // ─── Main function ────────────────────────────────────────────────────────────
 
-export async function analyzeCode(code: string, roastMode: boolean): Promise<RoastResponse> {
+export async function analyzeCode(
+	code: string,
+	roastMode: boolean,
+): Promise<RoastResponse> {
 	const { object } = await generateObject({
 		model: anthropic("claude-sonnet-4-5"),
 		schema: roastResponseSchema,

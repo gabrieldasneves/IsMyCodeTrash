@@ -1,4 +1,7 @@
-import { getLeaderboardPage, getLeaderboardPreview } from "@/db/queries/leaderboard";
+import {
+	getLeaderboardPage,
+	getLeaderboardPreview,
+} from "@/db/queries/leaderboard";
 import { baseProcedure, createTRPCRouter } from "../init";
 
 export const leaderboardRouter = createTRPCRouter({
