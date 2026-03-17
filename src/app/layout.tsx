@@ -1,6 +1,6 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { Suspense } from "react";
 import { Navbar } from "@/components/ui/navbar";
 import { ThemeProvider } from "@/context/theme";
 import { TRPCReactProvider } from "@/trpc/client";
@@ -15,6 +15,9 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
 	title: "CodeRoaster",
 	description: "CodeRoaster",
+	metadataBase: new URL(
+		process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000",
+	),
 };
 
 export default function RootLayout({

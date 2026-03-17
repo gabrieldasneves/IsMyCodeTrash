@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import type { BundledLanguage } from "shiki";
 import { AnalysisCard } from "@/components/ui/analysis-card";
 import { Badge } from "@/components/ui/badge";
@@ -44,12 +44,28 @@ export async function generateMetadata({
 		return { title: "Roast Not Found — CodeRoaster" };
 	}
 
+	const ogImageUrl = `/api/og/${id}`;
+
 	return {
 		title: `Roast Results — CodeRoaster`,
 		description: `"${roast.roastQuote}" — score: ${roast.score}/10`,
 		openGraph: {
 			title: "CodeRoaster — Roast Results",
 			description: roast.roastQuote,
+			images: [
+				{
+					url: ogImageUrl,
+					width: 1200,
+					height: 630,
+					alt: `CodeRoaster — score ${roast.score}/10: ${roast.verdict}`,
+				},
+			],
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: "CodeRoaster — Roast Results",
+			description: roast.roastQuote,
+			images: [ogImageUrl],
 		},
 	};
 }
@@ -74,7 +90,6 @@ export default async function RoastResultPage({
 	return (
 		<main className="min-h-screen bg-[var(--color-bg-page)]">
 			<div className="mx-auto max-w-5xl px-10 py-10 flex flex-col gap-10">
-
 				{/* ── Score Hero ────────────────────────────────────────────────── */}
 				<section className="flex items-center gap-12">
 					<ScoreRing score={roast.score} />
@@ -89,10 +104,11 @@ export default async function RoastResultPage({
 							<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
 								lang: {roast.language}
 							</span>
-							<span className="font-mono text-xs text-[var(--color-text-tertiary)]">·</span>
 							<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
-								{roast.lineCount}{" "}
-								{roast.lineCount === 1 ? "line" : "lines"}
+								·
+							</span>
+							<span className="font-mono text-xs text-[var(--color-text-tertiary)]">
+								{roast.lineCount} {roast.lineCount === 1 ? "line" : "lines"}
 							</span>
 						</div>
 						<div className="flex items-center gap-3 pt-1">
@@ -113,7 +129,9 @@ export default async function RoastResultPage({
 				{/* ── Submitted Code ────────────────────────────────────────────── */}
 				<section className="flex flex-col gap-4">
 					<div className="flex items-center gap-2">
-						<span className="font-mono text-sm font-bold text-emerald-500">{"//"}</span>
+						<span className="font-mono text-sm font-bold text-emerald-500">
+							{"//"}
+						</span>
 						<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
 							your_submission
 						</span>
@@ -133,7 +151,9 @@ export default async function RoastResultPage({
 				{/* ── Detailed Analysis ─────────────────────────────────────────── */}
 				<section className="flex flex-col gap-6">
 					<div className="flex items-center gap-2">
-						<span className="font-mono text-sm font-bold text-emerald-500">{"//"}</span>
+						<span className="font-mono text-sm font-bold text-emerald-500">
+							{"//"}
+						</span>
 						<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
 							detailed_analysis
 						</span>
@@ -157,7 +177,9 @@ export default async function RoastResultPage({
 
 						<section className="flex flex-col gap-6">
 							<div className="flex items-center gap-2">
-								<span className="font-mono text-sm font-bold text-emerald-500">{"//"}</span>
+								<span className="font-mono text-sm font-bold text-emerald-500">
+									{"//"}
+								</span>
 								<span className="font-mono text-sm font-bold text-[var(--color-text-primary)]">
 									suggested_fix
 								</span>
@@ -183,18 +205,13 @@ export default async function RoastResultPage({
 								</div>
 								<div>
 									{roast.diffLines.map((line) => (
-										<DiffLine
-											key={line.id}
-											type={line.type}
-											code={line.code}
-										/>
+										<DiffLine key={line.id} type={line.type} code={line.code} />
 									))}
 								</div>
 							</div>
 						</section>
 					</>
 				)}
-
 			</div>
 		</main>
 	);
