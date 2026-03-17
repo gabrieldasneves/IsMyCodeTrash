@@ -1,14 +1,14 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: coderoaster_postgres
+    container_name: ismycodetrash_postgres
     restart: unless-stopped
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_USER: coderoaster
-      POSTGRES_PASSWORD: coderoaster
-      POSTGRES_DB: coderoaster
+      POSTGRES_USER: ismycodetrash
+      POSTGRES_PASSWORD: ismycodetrash
+      POSTGRES_DB: ismycodetrash
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

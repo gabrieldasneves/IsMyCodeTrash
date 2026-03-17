@@ -1,4 +1,4 @@
-// Curated language list for CodeRoaster
+// Curated language list for IsMyCodeTrash
 // Each entry has the display label, the Shiki lang id, and the hljs alias
 
 export type Language = {

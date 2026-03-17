@@ -67,7 +67,7 @@ import { cache } from "react";
 
 // O contexto é cacheado por request via React cache()
 export const createTRPCContext = cache(async () => {
-  // Sem autenticação no CodeRoaster — contexto vazio por ora.
+  // Sem autenticação no IsMyCodeTrash — contexto vazio por ora.
   // Futuramente: headers, rate limiting, etc.
   return {};
 });

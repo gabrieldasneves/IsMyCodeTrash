@@ -245,7 +245,7 @@ O componente `CodeEditor` existente em `src/components/ui/code-editor.tsx` será
 
 ## Linguagens suportadas (curadas)
 
-Subset inicial baseado no ray.so, priorizando as mais comuns para um "code roaster":
+Subset inicial baseado no ray.so, priorizando as mais comuns para um "IsMyCodeTrash":
 
 TypeScript, JavaScript, TSX, JSX, Python, Go, Rust, Java, Kotlin, Swift, C++, C#, PHP, Ruby, Scala, HTML, CSS, SCSS, JSON, YAML, SQL, Bash, Dockerfile, Markdown, GraphQL, Prisma, Vue, Svelte
 

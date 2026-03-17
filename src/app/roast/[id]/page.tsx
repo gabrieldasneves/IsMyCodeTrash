@@ -41,29 +41,29 @@ export async function generateMetadata({
 	const roast = await getRoastById(id);
 
 	if (!roast) {
-		return { title: "Roast Not Found — CodeRoaster" };
+		return { title: "Roast Not Found — IsMyCodeTrash" };
 	}
 
 	const ogImageUrl = `/api/og/${id}`;
 
 	return {
-		title: `Roast Results — CodeRoaster`,
+		title: `Roast Results — IsMyCodeTrash`,
 		description: `"${roast.roastQuote}" — score: ${roast.score}/10`,
 		openGraph: {
-			title: "CodeRoaster — Roast Results",
+			title: "IsMyCodeTrash — Roast Results",
 			description: roast.roastQuote,
 			images: [
 				{
 					url: ogImageUrl,
 					width: 1200,
 					height: 630,
-					alt: `CodeRoaster — score ${roast.score}/10: ${roast.verdict}`,
+					alt: `IsMyCodeTrash — score ${roast.score}/10: ${roast.verdict}`,
 				},
 			],
 		},
 		twitter: {
 			card: "summary_large_image",
-			title: "CodeRoaster — Roast Results",
+			title: "IsMyCodeTrash — Roast Results",
 			description: roast.roastQuote,
 			images: [ogImageUrl],
 		},

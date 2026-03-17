@@ -1,6 +1,6 @@
-# CodeRoaster
+# IsMyCodeTrash
 
-CodeRoaster is a web app that brutally judges your code. Paste any snippet, get an AI-powered roast with a shame score, and watch your worst code end up on a public leaderboard for everyone to see.
+IsMyCodeTrash is a web app that brutally judges your code. Paste any snippet, get an AI-powered roast with a shame score, and watch your worst code end up on a public leaderboard for everyone to see.
 
 ## Screenshots
 
@@ -121,7 +121,7 @@ cp .env.example .env.local
 |---|---|---|
 | `DATABASE_URL` | **Yes** | PostgreSQL connection string |
 | `ANTHROPIC_API_KEY` | **Yes — the app won't roast anything without this** | Your Anthropic API key. Get one at [console.anthropic.com](https://console.anthropic.com) |
-| `NEXT_PUBLIC_BASE_URL` | Yes (for OG images) | The public URL of your deployment, e.g. `https://coderoaster.dev` |
+| `NEXT_PUBLIC_BASE_URL` | Yes (for OG images) | The public URL of your deployment, e.g. `https://ismycodetrash.dev` |
 
 ### Getting your Anthropic API key
 
@@ -144,7 +144,7 @@ Things you **must** configure before going live:
 
 - [ ] **`ANTHROPIC_API_KEY`** — set in your hosting provider's environment variables (Vercel, Railway, Fly.io, etc.). The app is completely non-functional without it.
 - [ ] **`DATABASE_URL`** — point to a production PostgreSQL instance (e.g. Neon, Supabase, Railway Postgres). Do not use the local Docker instance in production.
-- [ ] **`NEXT_PUBLIC_BASE_URL`** — set to your production domain (e.g. `https://coderoaster.dev`). Without this, the `og:image` meta tag will contain a relative URL and Twitter/Discord/Slack embeds will not show the preview image.
+- [ ] **`NEXT_PUBLIC_BASE_URL`** — set to your production domain (e.g. `https://ismycodetrash.dev`). Without this, the `og:image` meta tag will contain a relative URL and Twitter/Discord/Slack embeds will not show the preview image.
 - [ ] **Run migrations** — after deploying, run `npm run db:migrate` against your production database before the first request.
 - [ ] **Review `cacheLife` values** — leaderboard and stats are cached for 1 hour by default. Adjust in `src/db/queries/` if needed.
 - [ ] **Rate limiting** — the roast endpoint calls the Anthropic API on every submission. Consider adding rate limiting (e.g. Upstash Ratelimit) to avoid runaway costs.

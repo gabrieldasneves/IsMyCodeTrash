@@ -1,4 +1,4 @@
-# CodeRoaster — Agent Guidelines
+# IsMyCodeTrash — Agent Guidelines
 
 ## Project
 

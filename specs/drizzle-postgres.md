@@ -2,7 +2,7 @@
 
 ## Contexto
 
-O CodeRoaster atualmente usa dados estáticos hardcoded (leaderboard fake, contadores fictícios). Esta spec define a implementação do Drizzle ORM com PostgreSQL para persistir:
+O IsMyCodeTrash atualmente usa dados estáticos hardcoded (leaderboard fake, contadores fictícios). Esta spec define a implementação do Drizzle ORM com PostgreSQL para persistir:
 
 - Submissões de código roasted
 - Resultados da análise da IA (score, verdict, issues, diff)
@@ -251,26 +251,26 @@ docker-compose.yml    ← Postgres + pgAdmin (opcional)
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: coderoaster_postgres
+    container_name: ismycodetrash_postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: coderoaster
-      POSTGRES_PASSWORD: coderoaster
-      POSTGRES_DB: coderoaster
+      POSTGRES_USER: ismycodetrash
+      POSTGRES_PASSWORD: ismycodetrash
+      POSTGRES_DB: ismycodetrash
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   # pgAdmin opcional — remover se não precisar da UI
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: coderoaster_pgadmin
+    container_name: ismycodetrash_pgadmin
     restart: unless-stopped
     ports:
       - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@coderoaster.dev
+      PGADMIN_DEFAULT_EMAIL: admin@ismycodetrash.dev
       PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
       - postgres
@@ -287,13 +287,13 @@ volumes:
 
 ```bash
 # PostgreSQL — gerado pelo docker-compose.yml acima
-DATABASE_URL="postgresql://coderoaster:coderoaster@localhost:5432/coderoaster"
+DATABASE_URL="postgresql://ismycodetrash:ismycodetrash@localhost:5432/ismycodetrash"
 ```
 
 **.env.local** (criado localmente, não commitado)
 
 ```bash
-DATABASE_URL="postgresql://coderoaster:coderoaster@localhost:5432/coderoaster"
+DATABASE_URL="postgresql://ismycodetrash:ismycodetrash@localhost:5432/ismycodetrash"
 ```
 
 Adicionar ao `.gitignore`:
@@ -683,7 +683,7 @@ export async function createRoast(input: CreateRoastInput) {
 ## Decisões e Justificativas
 
 **Por que Drizzle e não Prisma?**
-Drizzle é schema-as-code em TypeScript puro, sem geração de código extra. Queries são SQL-like (mais previsível), o bundle é menor e a integração com Next.js App Router/Edge é mais direta. Para o escopo do CodeRoaster, a simplicidade do Drizzle é preferível.
+Drizzle é schema-as-code em TypeScript puro, sem geração de código extra. Queries são SQL-like (mais previsível), o bundle é menor e a integração com Next.js App Router/Edge é mais direta. Para o escopo do IsMyCodeTrash, a simplicidade do Drizzle é preferível.
 
 **Por que `postgres` (lib) e não `pg`?**
 A lib `postgres` (Postgres.js) tem suporte nativo a pool de conexões, é mais ergonômica para uso com Drizzle e tem performance superior para queries paralelas. O Drizzle recomenda `postgres` para PostgreSQL.

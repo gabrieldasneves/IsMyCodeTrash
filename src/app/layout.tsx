@@ -13,8 +13,8 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "CodeRoaster",
-	description: "CodeRoaster",
+	title: "IsMyCodeTrash",
+	description: "IsMyCodeTrash",
 	metadataBase: new URL(
 		process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000",
 	),

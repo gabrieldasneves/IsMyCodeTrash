@@ -6,11 +6,11 @@ import { LeaderboardPageSkeleton } from "@/components/ui/leaderboard-page-skelet
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
-	title: "Shame Leaderboard — CodeRoaster",
+	title: "Shame Leaderboard — IsMyCodeTrash",
 	description:
 		"The most roasted code on the internet. See which snippets earned the lowest scores in our public hall of shame.",
 	openGraph: {
-		title: "Shame Leaderboard — CodeRoaster",
+		title: "Shame Leaderboard — IsMyCodeTrash",
 		description: "The most roasted code on the internet, ranked by shame.",
 	},
 };
